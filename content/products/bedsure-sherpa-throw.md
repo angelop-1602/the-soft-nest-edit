@@ -2,7 +2,7 @@
 title: Bedsure GentleSoft Sherpa Fleece Throw Blanket (50 × 60 in, Grey)
 retailer: Amazon US
 category: Living Room
-image: /uploads/91-vcvxpxelacsl1500.avif
+image: /uploads/91-vcvxpxelacsl1500-1.avif
 image_alt: B0158EQJSY
 summary: A reversible, non-heated polyester sherpa-and-fleece throw to compare
   when you need a warm layer for the sofa. Check dimensions and color options.

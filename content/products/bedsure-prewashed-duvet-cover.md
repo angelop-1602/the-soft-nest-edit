@@ -2,7 +2,7 @@
 title: Bedsure Prewashed Duvet Cover Set (Queen, White)
 retailer: Amazon US
 category: Bedroom
-image: /uploads/81ekaak6b6lacsl1500.avif
+image: /uploads/81vvz2zhplacsl1500-1.avif
 image_alt: B01NBNDC1T
 summary: A solid-color polyester microfiber duvet-cover set. Listing states it
   includes a queen duvet cover and two shams; the comforter/insert is sold

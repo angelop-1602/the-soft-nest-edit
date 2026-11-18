@@ -2,7 +2,7 @@
 title: Command X-Large Heavyweight Picture Hanging Strips (16 Pairs)
 retailer: Amazon US
 category: Small Spaces
-image: /uploads/81vvz2zhplacsl1500.avif
+image: /uploads/elegant-entryway-wall-organization.png
 image_alt: B0B3SR5M71
 summary: Adhesive picture-hanging strips for approved frames and suitable
   surfaces. Follow the product installation, weight and surface restrictions
