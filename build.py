@@ -3,7 +3,7 @@
 import os, json, shutil, html, re
 from pathlib import Path
 from datetime import date, datetime
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 import yaml, mistune
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -22,6 +22,79 @@ CATEGORY_IMAGES = {
   'Home Organization': 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=960&q=78',
   'Lifestyle': 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=960&q=78',
 }
+
+def load_product(path):
+    """Return a publicly eligible product, or None for drafts/incomplete entries.
+
+    Products are intentionally static editorial recommendations, not an online store.
+    Only explicitly published products with valid HTTPS retailer links appear.
+    """
+    raw = path.read_text(encoding='utf-8')
+    chunks = raw.split('---', 2)
+    if len(chunks) != 3 or chunks[0].strip():
+        raise ValueError(f'{path}: expected YAML front matter between --- lines')
+    meta = yaml.safe_load(chunks[1]) or {}
+    if meta.get('published') is not True:
+        return None
+    required = ['title', 'retailer', 'category', 'summary', 'image', 'image_alt', 'product_url']
+    missing = [key for key in required if not meta.get(key)]
+    if missing:
+        print(f'Warning: unpublished incomplete product {path.name}; missing {missing}')
+        return None
+    url = str(meta['product_url']).strip()
+    parsed = urlparse(url)
+    if (parsed.scheme != 'https' or not parsed.netloc or parsed.username or parsed.password
+            or any(ch.isspace() for ch in url)):
+        print(f'Warning: product {path.name} has invalid HTTPS retailer URL; skipped')
+        return None
+    image_url = str(meta['image']).strip()
+    image_parsed = urlparse(image_url)
+    if not (image_url.startswith('/uploads/') or
+            (image_parsed.scheme == 'https' and image_parsed.netloc)):
+        print(f'Warning: product {path.name} has an invalid image path; skipped')
+        return None
+    slug = path.stem
+    if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', slug):
+        print(f'Warning: product {path.name} has an invalid slug; skipped')
+        return None
+    if meta['category'] not in CAT_SLUG:
+        print(f'Warning: product {path.name} has an unsupported category; skipped')
+        return None
+    return {
+        **meta, 'slug': slug, 'product_url': url,
+        'affiliate': meta.get('affiliate') is True,
+        'featured_shop': meta.get('featured_shop') is True,
+        'price_note': str(meta.get('price_note') or '').strip(),
+        'category_slug': CAT_SLUG[meta['category']],
+    }
+
+
+# Build the product lookup before resolving references in posts.
+product_dir = ROOT / 'content/products'
+products = [product for path in product_dir.glob('*.md') if (product := load_product(path))]
+products.sort(key=lambda product: (not product['featured_shop'], product['title'].lower()))
+products_by_slug = {p['slug']: p for p in products}
+
+
+def related_products(refs):
+    """Resolve Pages CMS references stored as content/products/<slug>.md paths."""
+    if not refs:
+        return []
+    if isinstance(refs, str):
+        refs = [refs]
+    if not isinstance(refs, list):
+        return []
+    selected, seen = [], set()
+    for reference in refs:
+        if not isinstance(reference, str):
+            continue
+        slug = Path(reference.replace('\\', '/')).stem
+        product = products_by_slug.get(slug)
+        if product and slug not in seen:
+            selected.append(product)
+            seen.add(slug)
+    return selected
+
 
 def load_post(path):
     raw = path.read_text(encoding='utf-8')
@@ -47,8 +120,11 @@ def load_post(path):
         raise ValueError(f'Invalid slug: {slug}')
     content_html = MD(chunks[2].strip())
     words = len(re.findall(r'\b\w+\b', chunks[2]))
+    linked_products = related_products(meta.get('products', []))
     return {
-       **meta, 'slug':slug, 'date_iso':d.isoformat(),
+       **meta, 'linked_products': linked_products,
+       'has_affiliate_products': any(p['affiliate'] for p in linked_products),
+       'slug':slug, 'date_iso':d.isoformat(),
        'date_display':d.strftime('%B %-d, %Y') if os.name!='nt' else d.strftime('%B %d, %Y'),
        'html':content_html, 'reading_minutes':max(2,round(words/200)),
        'url':f'/journal/{slug}/', 'category_slug':CAT_SLUG.get(meta['category'],'lifestyle'),
@@ -70,6 +146,7 @@ def render(path, template='page.html', **params):
     context = dict(site=SITE, title=title, description=description,
         current_path=url, canonical=full_url, og_image=image, full_url=full_url,
         posts=posts, featured=[x for x in posts if x.get('featured',False)],
+        products=products, featured_products=[p for p in products if p['featured_shop']],
         categories=CATEGORIES, category_images=CATEGORY_IMAGES, year=date.today().year)
     context.update(params)
     output = ENV.get_template(template).render(**context)
@@ -86,12 +163,12 @@ for category, slug in CATEGORIES:
 for post in posts:
     related=[x for x in posts if x['slug']!=post['slug']][:2]
     render(f'journal/{post["slug"]}','article.html',title=post['title']+' | The Soft Nest Edit',description=post['description'], og_image=post['image'], page='article', post=post, related=related)
-render('shop','shop.html', title='Shop the Edit | Thoughtful Decor Finds',description='Explore home decor shopping guides and smart category-by-category ideas for cozy, functional spaces.',page='shop')
+render('shop','shop.html', title='Shop the Edit | Thoughtful Decor Finds',description='Explore home decor shopping guides and smart category-by-category ideas for cozy, functional spaces.',page='shop', has_affiliate_products=any(p['affiliate'] for p in products))
 render('about','simple.html', title='About | The Soft Nest Edit', page='about', heading='A home to come back to.', kicker='OUR STORY',
   body="The Soft Nest Edit is a home decor journal for people who want their spaces to feel calm, cozy and truly their own. We believe thoughtful rooms are made one little decision at a time—not by buying everything new. Here you'll find practical styling ideas, helpful small-space inspiration and carefully considered product categories. We write for real homes, real budgets and the little moments that make a place feel lived in.")
 render('contact','simple.html', title='Contact | The Soft Nest Edit', page='contact',heading="Let's keep in touch.", kicker='CONTACT',
   body='Have a decor question, collaboration idea or note about our content? You can reach us using the contact details below when our public business email is ready. For now, explore the journal and follow our website updates.')
-render('affiliate-disclosure','legal.html',title='Affiliate Disclosure | The Soft Nest Edit',page='legal',heading='Affiliate Disclosure',body_html='''<p>The Soft Nest Edit is being developed as an affiliate-supported website. In the future, some articles may contain affiliate links. If you click a qualifying affiliate link and make a purchase, we may receive a commission at no additional cost to you.</p><p>When a post contains affiliate links, we aim to make that relationship clear near the recommendation and provide useful context about why a product may suit a particular space. We do not present untested products as personally tested.</p><p>At launch, our example articles do not contain commissioned product links. The presence of a product category or store name does not, by itself, imply a paid relationship.</p><p>Any claims about product quality, pricing, stock or suitability should be checked on the retailer's official site before purchasing.</p>''')
+render('affiliate-disclosure','legal.html',title='Affiliate Disclosure | The Soft Nest Edit',page='legal',heading='Affiliate Disclosure',body_html='''<p>The Soft Nest Edit may be supported by affiliate links. Some shopping guides or articles may contain these links. If you click a qualifying affiliate link and make a purchase, we may receive a commission at no additional cost to you.</p><p>When a post contains affiliate links, we aim to make that relationship clear near the recommendation and provide useful context about why a product may suit a particular space. We do not present untested products as personally tested.</p><p>We identify affiliate links near relevant recommendations and in product cards where appropriate. The presence of a product category or store name does not, by itself, imply a paid relationship.</p><p>Any claims about product quality, pricing, stock or suitability should be checked on the retailer's official site before purchasing.</p>''')
 render('privacy','legal.html',title='Privacy Policy | The Soft Nest Edit',page='legal',heading='Privacy Policy',body_html='''<p><strong>Last updated:</strong> November 18, 2026</p><p>This starter website is a static information website. It does not create user accounts or collect newsletter signups. We have not installed analytics, advertising cookies or a contact submission service in this starter version.</p><p>Our hosting provider may process routine server and request information as part of delivering the website. We also load example photography from Unsplash and web fonts from Google Fonts; those services can receive requests from a visitor's browser, including network information such as IP address. External websites we link to, including Pinterest and merchants if added later, follow their own privacy policies.</p><p>If we add analytics, forms, comments, advertising or affiliate network tracking, this policy must be reviewed and updated before those features go live. Additional rights or disclosures may apply depending on where visitors are located.</p><p>For questions about personal data, use the business contact information published on our Contact page once available.</p><p><em>This template is not legal advice. Review and tailor it before launching your business.</em></p>''')
 render('admin','admin.html',title='Editor access | The Soft Nest Edit',page='admin')
 render('404','simple.html',title='Page not found | The Soft Nest Edit',page='404',heading='This page has wandered off.',kicker='404 — PAGE NOT FOUND',body='We could not find that page. Head back to our journal to find something lovely.')

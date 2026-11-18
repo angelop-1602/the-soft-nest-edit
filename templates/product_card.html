@@ -1,0 +1,17 @@
+{% macro product_card(product) %}
+<article class="affiliate-product" data-category="{{ product.category }}">
+  <div class="affiliate-product-image">
+    <a href="{{ product.product_url }}" target="_blank" rel="{{ 'sponsored nofollow noopener noreferrer' if product.affiliate else 'noopener noreferrer' }}" aria-label="View {{ product.title }} at {{ product.retailer }}">
+      <img src="{{ product.image }}" alt="{{ product.image_alt }}" loading="lazy" />
+      <span class="affiliate-product-arrow" aria-hidden="true">↗</span>
+    </a>
+  </div>
+  <div class="affiliate-product-content">
+    <div class="affiliate-product-eyebrow"><span>{{ product.category }}</span>{% if product.affiliate %}<span>Affiliate link</span>{% else %}<span>Retailer link</span>{% endif %}</div>
+    <h3>{{ product.title }}</h3>
+    <p class="affiliate-product-description">{{ product.summary }}</p>
+    {% if product.price_note %}<p class="affiliate-product-price">{{ product.price_note }} <small>· Check current price with retailer</small></p>{% endif %}
+    <a class="affiliate-product-button" href="{{ product.product_url }}" target="_blank" rel="{{ 'sponsored nofollow noopener noreferrer' if product.affiliate else 'noopener noreferrer' }}">View at {{ product.retailer }} <span aria-hidden="true">↗</span></a>
+  </div>
+</article>
+{% endmacro %}
