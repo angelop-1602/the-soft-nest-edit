@@ -8,7 +8,7 @@ image: /uploads/uozi1p0rz-pmt15k9tnc6tyf6wienxde8xtsqersybdd61ukqkuoo5z38qw3bj6z
 image_alt: Cozy neutral living room with a soft sofa, textured blankets, warm
   lighting, and natural wood accents.
 featured: false
-published: false
+published: true
 ---
 A cozy home isn't about having expensive furniture or following every interior design trend. It's about creating a space where you can relax, feel comfortable, and enjoy the little moments of everyday life.
 
