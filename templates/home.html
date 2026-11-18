@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import card %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <div class="hero-copy-inner">
+      <div class="eyebrow"><span class="tiny-line"></span> THE ART OF SLOW LIVING <span class="tiny-line"></span></div>
+      <h1>Make space<br/>for the things<br/><em>that matter.</em></h1>
+      <p>Beautifully simple home decor ideas, effortless styling tips and little moments of inspiration for the place you love most.</p>
+      <a class="btn btn-dark" href="/journal/">Explore the journal <span>↗</span></a>
+      <div class="hero-bottom"><span class="asterisk">✳</span> GOOD DESIGN. REAL LIVING.</div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="https://images.unsplash.com/photo-1722942631531-5b09fed44978?auto=format&fit=crop&w=1600&q=85" alt="Sunlit home with a cream sofa, low oak table and relaxed decor" fetchpriority="high" />
+    <div class="hero-image-note"><span>01 / YOUR HOME, REIMAGINED</span><span>↗</span></div>
+  </div>
+  <div class="hero-edge-caption">CURATED LIVING  •  THOUGHTFUL SPACES  •  EVERYDAY BEAUTY</div>
+</section>
+<section class="intro-section shell">
+  <p class="micro-title">WELCOME TO THE SOFT NEST EDIT</p>
+  <div class="intro-layout"><h2>There’s beauty in<br/><em>the everyday.</em></h2><div class="intro-right"><p>We believe a beautiful home shouldn't feel out of reach. Discover considered ideas for styling your space with warmth, intention and a little personality.</p><a class="read-link" href="/about/">Get to know us <span aria-hidden="true">↗</span></a></div></div>
+</section>
+<section class="categories-section section-pad">
+  <div class="shell">
+    <div class="section-heading"><div><p class="micro-title">FIND YOUR INSPIRATION</p><h2>Explore by <em>space.</em></h2></div><a class="read-link" href="/journal/">Browse all stories <span aria-hidden="true">↗</span></a></div>
+    <div class="category-grid">
+      {% for category, slug in categories[:3] %}
+      <a class="category-card" href="/category/{{ slug }}/"><div class="category-image"><img loading="lazy" src="{{ category_images[category] }}" alt="{{ category }} decor inspiration" /></div><div class="category-info"><span class="category-count">0{{ loop.index }} / EXPLORE</span><h3>{{ category }}</h3><span aria-hidden="true">↗</span></div></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<section class="journal-feature section-pad shell">
+  <div class="section-heading"><div><p class="micro-title">THE LATEST FROM OUR JOURNAL</p><h2>Stories for <em>living well.</em></h2></div><a class="read-link" href="/journal/">View the journal <span aria-hidden="true">↗</span></a></div>
+  <div class="post-grid">{% for post in featured[:3] %}{{ card(post) }}{% endfor %}</div>
+</section>
+<section class="quote-banner"><div class="shell"><span class="quote-asterisk">✳</span><p>“A home should feel like <em>your favourite place to be.</em>”</p><span class="quote-credit">THE SOFT NEST PHILOSOPHY</span></div></section>
+<section class="shop-section section-pad shell">
+  <div class="section-heading"><div><p class="micro-title">CONSIDERED FINDS, INTENTIONALLY CHOSEN</p><h2>Little things, <em>lovely impact.</em></h2></div><a class="read-link" href="/shop/">Explore the edit <span aria-hidden="true">↗</span></a></div>
+  <div class="shop-layout"><div class="shop-image"><img loading="lazy" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=82" alt="Thoughtfully styled neutral home with warm accents" /></div><div class="shop-copy"><span class="shop-index">THE DECOR EDIT / 001</span><h3>The little details that make a room <em>feel like yours.</em></h3><p>From the right kind of lighting to textures that invite you to stay, explore practical advice for choosing beautiful, hardworking pieces.</p><div class="shop-topic"><span>01</span><a href="/journal/cozy-living-room-ideas-on-a-budget/">Lighting & atmosphere <b>↗</b></a></div><div class="shop-topic"><span>02</span><a href="/journal/cozy-bedroom-on-a-budget/">Soft textures & textiles <b>↗</b></a></div><div class="shop-topic"><span>03</span><a href="/journal/small-apartment-decor-ideas/">Storage with style <b>↗</b></a></div></div></div>
+</section>
+<section class="closing-banner"><div class="closing-image"><img loading="lazy" src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=82" alt="Sunlit neutral interior" /></div><div class="closing-content"><span class="micro-title">A SPACE TO COME HOME TO</span><h2>Good living begins<br/><em>at home.</em></h2><p>More comfort, less clutter. More meaning, fewer things. Find your own way to make a space feel just right.</p><a href="/journal/" class="btn btn-cream">Find your inspiration <span>↗</span></a></div></section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% macro card(post, featured=False) %}
+<article class="post-card {% if featured %}post-card-featured{% endif %}" data-category="{{ post.category }}" data-search="{{ (post.title ~ ' ' ~ post.description ~ ' ' ~ post.category)|lower }}">
+  <a class="post-image-wrap" href="{{ post.url }}" aria-label="Read {{ post.title }}">
+    <img loading="lazy" src="{{ post.image }}" alt="{{ post.image_alt }}" />
+    <span class="image-arrow" aria-hidden="true">↗</span>
+  </a>
+  <div class="post-meta"><span>{{ post.category }}</span><span class="meta-dot">✳</span><span>{{ post.reading_minutes }} MIN READ</span></div>
+  <h3><a href="{{ post.url }}">{{ post.title }}</a></h3>
+  <p>{{ post.description }}</p>
+  <a class="read-link" href="{{ post.url }}">Read the story <span aria-hidden="true">↗</span></a>
+</article>
+{% endmacro %}

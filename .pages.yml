@@ -1,0 +1,88 @@
+# Pages CMS: https://app.pagescms.org
+# Sign in with the GitHub account that owns this repository.
+media:
+  input: static/uploads
+  output: /uploads
+  rename: safe
+  categories: [image]
+
+content:
+  - name: posts
+    label: Blog posts
+    type: collection
+    path: content/posts
+    format: yaml-frontmatter
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields: [title, date, category, published]
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Post title
+        type: string
+        required: true
+      - name: date
+        label: Publication date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: category
+        label: Category
+        type: select
+        required: true
+        options:
+          values: [Living Room, Bedroom, Small Spaces, Home Organization, Lifestyle]
+      - name: description
+        label: Search description (SEO)
+        type: text
+        required: true
+        description: Aim for 120–160 characters; also shown on Pinterest shares.
+      - name: image
+        label: Cover image
+        type: image
+        required: true
+      - name: image_alt
+        label: Cover image description
+        type: string
+        required: true
+      - name: featured
+        label: Feature on home page
+        type: boolean
+      - name: published
+        label: Published / visible on website
+        type: boolean
+        description: Leave off to save a draft. No preview is published for drafts.
+      - name: body
+        label: Article body
+        type: rich-text
+        required: true
+  - name: settings
+    label: Site settings
+    type: file
+    path: data/site.yml
+    fields:
+      - name: name
+        label: Brand name
+        type: string
+        required: true
+      - name: tagline
+        label: Brand tagline
+        type: string
+      - name: description
+        label: Site description (SEO)
+        type: text
+      - name: site_url
+        label: Canonical website address
+        type: string
+        description: After deployment, enter your full https:// address. Leave blank until then.
+      - name: pinterest_url
+        label: Pinterest profile URL
+        type: string
+        description: Leave blank until your Pinterest profile is live.
+      - name: contact_email
+        label: Contact email
+        type: string
+        description: Leave blank until you have a public business email.

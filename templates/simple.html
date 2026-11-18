@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<section class="simple-page shell"><span class="micro-title">{{ kicker }}</span><h1>{{ heading }}</h1><p>{{ body }}</p>{% if page=='contact' and site.contact_email %}<a href="mailto:{{ site.contact_email }}" class="btn btn-dark">Email us ↗</a>{% else %}<a href="/journal/" class="btn btn-dark">Explore the journal ↗</a>{% endif %}</section>{% endblock %}

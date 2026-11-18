@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import card %}
+{% block content %}
+<section class="sub-hero shell"><span class="micro-title">THE SOFT NEST EDIT / JOURNAL</span><h1>Ideas for a home<br/><em>you love living in.</em></h1><p>Simple inspiration, thoughtful tips and practical ideas for every corner of your home.</p></section>
+<section class="journal-page shell">
+  <div class="filter-bar"><div class="filter-list"><a {% if selected=='All' %}class="selected"{% endif %} href="/journal/">All stories</a>{% for category,slug in categories %}<a {% if selected==category %}class="selected"{% endif %} href="/category/{{ slug }}/">{{ category }}</a>{% endfor %}</div><label class="search-field" aria-label="Search articles"><span aria-hidden="true">⌕</span><input id="post-search" type="search" placeholder="Search stories..." autocomplete="off" /></label></div>
+  {% if visible_posts %}<div class="post-grid journal-grid" id="post-list">{% for post in visible_posts %}{{ card(post) }}{% endfor %}</div><p class="empty-result" id="empty-search" hidden>No stories match your search. Try another word.</p>{% else %}<div class="empty-category"><span>✳</span><h2>Fresh stories are on their way.</h2><p>We're building this section with care. In the meantime, explore the journal.</p><a class="btn btn-dark" href="/journal/">All stories →</a></div>{% endif %}
+</section>
+{% endblock %}
