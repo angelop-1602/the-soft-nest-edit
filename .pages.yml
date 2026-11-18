@@ -55,10 +55,81 @@ content:
         label: Published / visible on website
         type: boolean
         description: Leave off to save a draft. No preview is published for drafts.
+      - name: products
+        label: Related affiliate products
+        type: reference
+        description: Select products from Affiliate Products. Only published products with valid retailer links appear on the website.
+        options:
+          collection: products
+          multiple: true
+          max: 8
+          search: "title,retailer,category"
+          value: "{path}"
+          label: "{primary} — {retailer}"
       - name: body
         label: Article body
         type: rich-text
         required: true
+  - name: products
+    label: Affiliate Products
+    type: collection
+    path: content/products
+    format: yaml-frontmatter
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields: [title, retailer, category, published, affiliate]
+    fields:
+      - name: title
+        label: Product name
+        type: string
+        required: true
+      - name: retailer
+        label: Store / retailer
+        type: string
+        required: true
+        description: The retailer customers visit after clicking the product.
+      - name: category
+        label: Product category
+        type: select
+        required: true
+        options:
+          values: [Living Room, Bedroom, Small Spaces, Home Organization, Lifestyle]
+      - name: image
+        label: Product image
+        type: image
+        description: Upload an image you own or are licensed to use; check the affiliate program's image rules.
+      - name: image_alt
+        label: Product image description
+        type: string
+      - name: summary
+        label: Why this product is relevant
+        type: text
+        required: true
+        description: Keep this original and useful. Do not claim to have tested an item unless you actually have.
+      - name: product_url
+        label: Retailer / affiliate URL (https)
+        type: string
+        description: Paste your approved tracking link. A product without a valid https URL will not be published.
+      - name: price_note
+        label: Optional price note
+        type: string
+        description: Prefer a non-numeric price range or leave blank; prices and some affiliate-program rules change.
+      - name: affiliate
+        label: Affiliate link / may earn commission
+        type: boolean
+        description: Enable only when the URL is an affiliate link. The website adds sponsored link attributes and disclosure.
+      - name: featured_shop
+        label: Highlight on homepage
+        type: boolean
+      - name: published
+        label: Published / visible on website
+        type: boolean
+        description: Leave off while preparing a product; only published products with valid links appear.
+      - name: body
+        label: Editor notes (optional)
+        type: rich-text
+        description: Not displayed on the public site, but stored in GitHub. Do not store confidential information.
   - name: settings
     label: Site settings
     type: file

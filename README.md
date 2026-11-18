@@ -6,7 +6,9 @@ An editorial home decor blog with a free GitHub-authenticated content editor. Bu
 
 - Responsive editorial homepage, journal, category and article pages
 - Three sample long-form blog articles, ready to edit
-- Shop the Edit landing page (links to genuine editorial articles; **no pretend affiliate links**)
+- Shop the Edit landing page with published products (and editorial guides when no products exist)
+- Affiliate Product Manager in Pages CMS with a separate product library and related-product picker in blog posts
+- Product cards in articles, on the Shop page and (when featured) on the homepage; automatic link disclosure and sponsored attributes
 - About, contact, affiliate disclosure and provisional privacy policy
 - Search on journal listings, Pinterest share links, Open Graph tags, BlogPosting structured data, XML sitemap and RSS feed
 - `/admin/` shortcut to the hosted **Pages CMS** editor
@@ -37,8 +39,9 @@ Visit `http://localhost:8000` and `http://localhost:8000/admin/`.
 1. Go to <https://app.pagescms.org> and sign in with GitHub.
 2. Install the Pages CMS GitHub App for the repository you created.
 3. Open your repo. Pages CMS will read the included `.pages.yml` file and show **Blog posts** and **Site settings**.
-4. Under Blog posts, choose Create, enter the title, date, category, SEO description, cover image, alt text and body. Leave **Published** disabled to keep a draft. Flip it on when ready to publish.
-5. Save: Pages CMS commits the article file to GitHub. Once Cloudflare is connected, its build/deploy starts automatically.
+4. Under **Affiliate Products**, choose Create, enter the product name, retailer, category, image, original description, and approved HTTPS retailer/affiliate link. Turn on **Affiliate link** when applicable. Leave **Published** off while drafting.
+5. Under **Blog posts**, edit an existing article or create a new one, then use **Related affiliate products** to select published products. Set **Highlight on homepage** in a product to feature it on the homepage as well.
+6. Save: Pages CMS commits changes to GitHub. Cloudflare's connected build/deploy then publishes the updated pages. View the build log if the site doesn't update.
 
 **Important:** The admin UI actually lives at `app.pagescms.org` and is secured by GitHub login. `/admin/` on your public blog is merely a shortcut. It does not host a secret password form or provide additional security. Do not put passwords or API keys in `.pages.yml`.
 
@@ -67,7 +70,11 @@ If the build errors because Python tooling is unavailable in your particular bui
 - Cover images and article images can be uploaded through Pages CMS into `static/uploads/` and rendered from `/uploads/...`.
 - `published: false` articles are omitted from live builds. Future-dated articles are also omitted until the build runs again after their date; there is **no automatic scheduled rebuild**. For planned future posts, save drafts and manually publish them on the intended day.
 - Changes to categories require adjusting both `build.py` and `.pages.yml`.
-- Once you have approved affiliate links, add them naturally inside articles through the rich-text editor. Use clear, nearby disclosures, and follow each merchant's program rules.
+- Once you have approved affiliate links, manage them centrally under **Affiliate Products** and choose them with each article's **Related affiliate products** picker. The site renders product cards below the article, and on the Shop page.
+- Only `published: true` products with complete information, a valid HTTPS URL, and a valid image are displayed. Drafts and invalid URLs are hidden. Both the product item and article should be published.
+- In product fields, **Affiliate link** enables `rel="sponsored nofollow noopener noreferrer"` and visible disclosure. Apply merchant-specific disclosure and creative requirements as well.
+- **Price note** is optional. Prefer leaving numeric prices blank or verifying pricing rules and accuracy before adding them. The store controls actual prices and availability.
+- The affiliate system displays outbound links; it does **not** track commissions, clicks, inventory, conversion events, or payouts.
 
 ## 6. Before launching publicly
 
@@ -92,3 +99,10 @@ If the build errors because Python tooling is unavailable in your particular bui
 - Deployment to Cloudflare and GitHub cannot be completed from a ZIP file alone. You must connect your own accounts.
 - The website is not an e-commerce checkout and does not manage affiliate sales or commissions.
 - Blog comment forms, newsletter backend, and on-site analytics are intentionally not enabled in the starter.
+- Affiliate products are editorial content entries, not a checkout or an inventory-management system.
+
+## 7. Affiliate Product Manager upgrade
+
+For an existing deployment, **do not replace your entire repository with this older starter snapshot**; this package was based on the original version of the site and your new Pages CMS posts may be more recent. Apply the included affiliate patch or copy only its changed source files, then keep your current `content/posts/`, `data/site.yml`, and deployment configuration intact.
+
+Use `python3 test_affiliate_manager.py` to test locally. See `AFFILIATE-MANAGER-SETUP.md` for the exact upgrade steps.
