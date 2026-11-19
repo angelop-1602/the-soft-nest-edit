@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="shell store-crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/shop/">Shop</a><span>/</span><a href="/shop/catalog-preview/">CJ catalog preview</a><span>/</span><span aria-current="page">Planning cart</span></nav>
+<section class="shell cj-cart-page" aria-labelledby="cj-cart-title">
+  <p class="micro-title">THE SOFT NEST EDIT / DEVELOPMENT PREVIEW</p>
+  <h1 id="cj-cart-title">Your <em>planning cart.</em></h1>
+  <p class="cj-cart-lead">Choose CJ product variants and plan quantities. This is a demonstration cart, not an active checkout. Product prices, stock, shipping, returns and supplier fulfillment must be verified before purchases can open.</p>
+  <p class="cj-cart-alert" role="status" id="cj-cart-status">Loading your saved selections…</p>
+  <div id="cj-cart-lines" class="cj-cart-lines"></div>
+  <div class="cj-cart-actions">
+    <a class="btn btn-dark" href="/shop/catalog-preview/">Browse CJ previews <span aria-hidden="true">↗</span></a>
+    <button type="button" class="cj-cart-clear" id="cj-cart-clear">Clear selections</button>
+  </div>
+  <div class="cj-cart-checkout" role="status"><strong>Checkout is not enabled</strong><p>No payment is taken and nothing is sent to CJ. We're preparing verified pricing, shipping and secure order creation before opening sales.</p></div>
+</section>
+{% endblock %}

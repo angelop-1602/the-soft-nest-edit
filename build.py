@@ -337,6 +337,7 @@ render('shop/checkout-test', 'store_paypal_sandbox.html',
        title='PayPal Sandbox Checkout Test | The Soft Nest Edit',
        description='Sandbox-only test of PayPal payment integration. No products sold.',
        page='paypal-sandbox-test', noindex=True)
+render('shop/cart-preview', 'store_cart_preview.html', title='Planning Cart | The Soft Nest Edit', description='CJ supplier catalog staging cart. Purchases are not yet available.', page='cj-cart-preview', noindex=True)
 render('shop/saved', 'store_saved.html', title='Saved Home Decor | The Soft Nest Edit',
        description='Your saved home decor ideas from The Soft Nest Edit.',
        page='saved', noindex=True,

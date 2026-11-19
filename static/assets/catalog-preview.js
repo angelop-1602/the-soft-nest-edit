@@ -22,6 +22,7 @@
 
   function productCard(item) {
     const article = element('article', 'store-product-card cj-preview-card');
+    article.dataset.cjProductId = item.id;
     const media = element('div', 'store-product-image cj-preview-image');
     if (item.image && /^https:\/\//i.test(item.image)) {
       const image = element('img');
