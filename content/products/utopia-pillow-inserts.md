@@ -6,7 +6,7 @@ image: /uploads/81ekaak6b6lacsl1500-1.avif
 image_alt: B0B3SR5M71
 summary: Two decorative pillow inserts for refreshing existing covers. Confirm
   fill, dimensions and count; inserts are not the same as cushion covers.
-product_url: https://www.amazon.com/dp/B0B3SR5M71
+product_url: https://www.amazon.com/dp/B01NBNDC1T
 affiliate: true
 featured_shop: false
 published: true
