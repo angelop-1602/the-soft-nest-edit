@@ -26,13 +26,14 @@ CATEGORY_IMAGES = {
 
 
 # SOFTNEST_STOREFRONT_24_V1 — separate owned-store inventory from Journal affiliate links.
+# SOFTNEST_INDEPENDENT_SHOP_V2 — listings can be previews until checkout is verified.
 STORE_CATEGORIES = yaml.safe_load((ROOT / 'data/shop_categories.yml').read_text(encoding='utf-8'))
 STORE_CATEGORY_BY_NAME = {c['name']: c for c in STORE_CATEGORIES}
 STORE_CATEGORY_BY_SLUG = {c['slug']: c for c in STORE_CATEGORIES}
 
 
 def load_store_product(path):
-    """A product is purchasable only after complete, deliberately published details exist."""
+    """Publish verified catalog information; never show a Buy action without prerequisites."""
     from decimal import Decimal, InvalidOperation
     raw = path.read_text(encoding='utf-8')
     chunks = raw.split('---', 2)
@@ -41,10 +42,9 @@ def load_store_product(path):
     meta = yaml.safe_load(chunks[1]) or {}
     if meta.get('published') is not True:
         return None
-    required = ('title', 'category', 'subcategory', 'image', 'image_alt', 'summary',
-                'checkout_url', 'shipping_details', 'return_details', 'price_usd')
-    if any(not str(meta.get(key) or '').strip() for key in required):
-        print(f'Warning: {path.name} incomplete — published store listing skipped')
+    essential = ('title', 'category', 'subcategory', 'image', 'image_alt', 'summary')
+    if any(not str(meta.get(field) or '').strip() for field in essential):
+        print(f'Warning: {path.name} missing essential catalog details — skipped')
         return None
     category = STORE_CATEGORY_BY_NAME.get(meta['category'])
     if not category or meta['subcategory'] not in category['subcategories']:
@@ -54,43 +54,61 @@ def load_store_product(path):
     if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', slug):
         print(f'Warning: {path.name} has invalid slug — skipped')
         return None
-    url = str(meta['checkout_url']).strip()
-    parsed = urlparse(url)
-    if (parsed.scheme != 'https' or not parsed.netloc or parsed.username or parsed.password
-            or any(char.isspace() for char in url)):
-        print(f'Warning: {path.name} has invalid HTTPS checkout URL — skipped')
-        return None
     image = str(meta['image']).strip()
     image_uri = urlparse(image)
-    if not (image.startswith('/uploads/') or (image_uri.scheme == 'https' and image_uri.netloc)):
+    if not (image.startswith('/uploads/') and '..' not in image.split('/') or
+            (image_uri.scheme == 'https' and image_uri.netloc and not image_uri.username and not image_uri.password)):
         print(f'Warning: {path.name} has invalid image URL — skipped')
         return None
-    try:
-        price = Decimal(str(meta['price_usd']))
-        if not price.is_finite() or price <= 0 or price.as_tuple().exponent < -2:
-            raise InvalidOperation
-    except (InvalidOperation, ValueError, TypeError):
-        print(f'Warning: {path.name} has invalid USD price — skipped')
-        return None
+    raw_price = meta.get('price_usd')
+    price_display = ''
+    if raw_price is not None and str(raw_price).strip():
+        try:
+            price = Decimal(str(raw_price))
+            if not price.is_finite() or price <= 0 or price.as_tuple().exponent < -2:
+                raise InvalidOperation
+            price_display = format(price, '.2f')
+        except (InvalidOperation, TypeError, ValueError):
+            print(f'Warning: {path.name} has invalid USD price — skipped')
+            return None
+    checkout_url = str(meta.get('checkout_url') or '').strip()
+    if checkout_url:
+        parsed = urlparse(checkout_url)
+        if parsed.scheme != 'https' or not parsed.netloc or parsed.username or parsed.password or any(ch.isspace() for ch in checkout_url):
+            print(f'Warning: {path.name} has invalid HTTPS checkout URL — skipped')
+            return None
+    # Backward compatible: existing listings with validated URLs remain buyable.
+    # New CMS records must explicitly enable ready_to_sell.
+    requested_sale = meta.get('ready_to_sell') if 'ready_to_sell' in meta else bool(checkout_url)
+    shipping = str(meta.get('shipping_details') or '').strip()
+    returns = str(meta.get('return_details') or '').strip()
+    is_purchasable = bool(requested_sale and checkout_url and price_display and shipping and returns)
+    if requested_sale and not is_purchasable:
+        print(f'Warning: {path.name} requested Buy Now but lacks checkout, price, shipping or return terms; displayed as preview')
     return {**meta, 'slug': slug, 'category_slug': category['slug'],
-            'url': f'/shop/product/{slug}/', 'checkout_url': url,
-            'price_display': format(price, '.2f'),
-            'featured': meta.get('featured') is True, 'sku': str(meta.get('sku') or '').strip()}
+            'url': f'/shop/product/{slug}/', 'checkout_url': checkout_url if is_purchasable else '',
+            'price_display': price_display, 'is_purchasable': is_purchasable,
+            'shipping_details': shipping, 'return_details': returns,
+            'featured': meta.get('featured') is True,
+            'sku': str(meta.get('sku') or '').strip()}
 
 
 store_product_dir = ROOT / 'content/store-products'
-store_products = [item for file in store_product_dir.glob('*.md')
-                  if (item := load_store_product(file))]
-store_products.sort(key=lambda item: (not item['featured'], item['title'].lower()))
+store_products = [p for path in store_product_dir.glob('*.md')
+                  if (p := load_store_product(path))]
+store_products.sort(key=lambda p: (not p['featured'], p['title'].lower()))
 
 
 def store_product_schema(item):
-    return {'@context': 'https://schema.org', '@type': 'Product',
+    data = {'@context': 'https://schema.org', '@type': 'Product',
             'name': item['title'], 'description': item['summary'],
-            'image': [absolute_url(item['image'])],
-            'sku': item.get('sku') or item['slug'],
-            'offers': {'@type': 'Offer', 'url': BASE_URL + item['url'],
-                       'priceCurrency': 'USD', 'price': item['price_display']}}
+            'image': [absolute_url(item['image'])]}
+    # Preview-only listings have no Offer markup; never tell search engines they are for sale.
+    if item['is_purchasable']:
+        data['offers'] = {'@type': 'Offer', 'url': BASE_URL + item['url'],
+                          'priceCurrency': 'USD', 'price': item['price_display']}
+    return data
+
 
 def load_product(path):
     """Return a publicly eligible product, or None for drafts/incomplete entries.
@@ -295,7 +313,7 @@ for post in posts:
            article_jsonld=article_schema(post), breadcrumb_jsonld=breadcrumbs_for(post))
 render('shop', 'shop.html',
        title='Shop Home Decor by Category | The Soft Nest Edit',
-       description='Shop home decor by category: lighting, wall art, mirrors, furniture, rugs, kitchen, bathroom and more. Explore 24 collections at The Soft Nest Edit.',
+       description='Browse curated home decor, from furniture and lighting to wall art, mirrors, rugs and outdoor accents. Explore 24 collections.',
        page='shop')
 for collection in STORE_CATEGORIES:
     matches = [item for item in store_products if item['category_slug'] == collection['slug']]
@@ -303,13 +321,21 @@ for collection in STORE_CATEGORIES:
            title=f"{collection['name']} | Home Decor | The Soft Nest Edit",
            description=f"Explore {collection['name'].lower()} including {', '.join(collection['subcategories'][:4]).lower()}. Shop decor and browse inspiration at The Soft Nest Edit.",
            page='shop', store_category=collection, store_category_products=matches,
-           noindex=not matches)
+           noindex=not any(item['is_purchasable'] for item in matches))
 for item in store_products:
     render(f"shop/product/{item['slug']}", 'store_product.html',
            title=f"{item['title']} | The Soft Nest Edit",
            description=item['summary'], page='shop', store_product=item,
            og_image=item['image'], og_image_alt=item['image_alt'],
-           store_product_jsonld=store_product_schema(item))
+           store_product_jsonld=store_product_schema(item),
+           noindex=not item['is_purchasable'])
+render('shop/saved', 'store_saved.html', title='Saved Home Decor | The Soft Nest Edit',
+       description='Your saved home decor ideas from The Soft Nest Edit.',
+       page='saved', noindex=True,
+       saved_catalog=[{'slug': p['slug'], 'title': p['title'], 'url': p['url'],
+                       'image': p['image'], 'image_alt': p['image_alt'],
+                       'category': p['category'], 'summary': p['summary'],
+                       'price_display': p['price_display']} for p in store_products])
 render('about','simple.html', title='About The Soft Nest Edit | Our Story',
        description='Meet The Soft Nest Edit, a home decor journal sharing approachable decorating advice, cozy room ideas and thoughtful finds.',
        page='about', heading='A home to come back to.', kicker='OUR STORY',
@@ -323,7 +349,7 @@ render('affiliate-disclosure','legal.html',title='Affiliate Disclosure | The Sof
        page='legal',heading='Affiliate Disclosure',body_html='''<p>The Soft Nest Edit may be supported by affiliate links. Some shopping guides or articles may contain these links. If you click a qualifying affiliate link and make a purchase, we may receive a commission at no additional cost to you.</p><p>When a post contains affiliate links, we aim to make that relationship clear near the recommendation and provide useful context about why a product may suit a particular space. We do not present untested products as personally tested.</p><p>We identify affiliate links near relevant recommendations and in product cards where appropriate. The presence of a product category or store name does not, by itself, imply a paid relationship.</p><p>As an Amazon Associate I earn from qualifying purchases.</p><p>Any claims about product quality, pricing, stock or suitability should be checked on the retailer's official site before purchasing.</p>''')
 render('privacy','legal.html',title='Privacy Policy | The Soft Nest Edit',
        description='Read The Soft Nest Edit privacy policy and how third-party hosting and links may process visitor information.',
-       page='legal',heading='Privacy Policy',body_html='''<p><strong>Last updated:</strong> November 18, 2026</p><p>This website is served as a static storefront and journal. We do not collect payment card details directly. When checkout is available, it takes place through an external payment provider. We may receive customer contact, shipping and order details from that provider and share the information necessary for order fulfillment with our supplier and delivery partners. Review this policy against your actual provider terms before enabling sales.</p><p>Our hosting provider may process routine server and request information as part of delivering the website. We also load example photography from Unsplash and web fonts from Google Fonts; those services can receive requests from a visitor's browser, including network information such as IP address. External websites we link to, including Pinterest and merchants if added later, follow their own privacy policies.</p><p>If we add analytics, forms, comments, advertising or affiliate network tracking, this policy must be reviewed and updated before those features go live. Additional rights or disclosures may apply depending on where visitors are located.</p><p>For questions about personal data, use the business contact information published on our Contact page once available.</p><p><em>This template is not legal advice. Review and tailor it before launching your business.</em></p>''')
+       page='legal',heading='Privacy Policy',body_html='''<p><strong>Last updated:</strong> November 18, 2026</p><p>This website is served as a static storefront and journal. The optional Saved products list uses browser local storage to keep product identifiers on your device; it does not create an account or transmit your saved list to us. We do not collect payment card details directly. When checkout is available, it takes place through an external payment provider. We may receive customer contact, shipping and order details from that provider and share the information necessary for order fulfillment with our supplier and delivery partners. Review this policy against your actual provider terms before enabling sales.</p><p>Our hosting provider may process routine server and request information as part of delivering the website. We also load example photography from Unsplash and web fonts from Google Fonts; those services can receive requests from a visitor's browser, including network information such as IP address. External websites we link to, including Pinterest and merchants if added later, follow their own privacy policies.</p><p>If we add analytics, forms, comments, advertising or affiliate network tracking, this policy must be reviewed and updated before those features go live. Additional rights or disclosures may apply depending on where visitors are located.</p><p>For questions about personal data, use the business contact information published on our Contact page once available.</p><p><em>This template is not legal advice. Review and tailor it before launching your business.</em></p>''')
 render('admin','admin.html',title='Editor access | The Soft Nest Edit',page='admin')
 render('404','simple.html',title='Page not found | The Soft Nest Edit',
        description='This page is not available. Return to The Soft Nest Edit journal for home decor inspiration.',
@@ -333,7 +359,7 @@ render('404','simple.html',title='Page not found | The Soft Nest Edit',
 # Search engine discovery and feed.
 import xml.etree.ElementTree as ET
 root=ET.Element('urlset',xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
-page_paths=['/','/journal/','/about/','/shop/','/contact/','/affiliate-disclosure/','/privacy/'] + [p['url'] for p in posts] + [f'/category/{slug}/' for _,slug in CATEGORIES] + [f"/shop/category/{c['slug']}/" for c in STORE_CATEGORIES if any(p['category_slug'] == c['slug'] for p in store_products)] + [p['url'] for p in store_products]
+page_paths=['/','/journal/','/about/','/shop/','/contact/','/affiliate-disclosure/','/privacy/'] + [p['url'] for p in posts] + [f'/category/{slug}/' for _,slug in CATEGORIES] + [f"/shop/category/{c['slug']}/" for c in STORE_CATEGORIES if any(p['category_slug'] == c['slug'] and p['is_purchasable'] for p in store_products)] + [p['url'] for p in store_products if p['is_purchasable']]
 posts_by_url = {post['url']: post for post in posts}
 for location in page_paths:
     node=ET.SubElement(root,'url')

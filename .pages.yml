@@ -144,7 +144,7 @@ content:
     filename: "{primary}.md"
     view:
       primary: title
-      fields: [title, category, subcategory, price_usd, published]
+      fields: [title, category, subcategory, price_usd, published, ready_to_sell]
     fields:
       - name: title
         label: Product title
@@ -174,32 +174,37 @@ content:
         type: text
         required: true
       - name: price_usd
-        label: Sale price in USD (without currency symbol)
+        label: Sale price in USD (optional for preview)
         type: number
-        required: true
+        required: false
+        description: Show USD price only when confirmed. Leave blank for a preview.
       - name: checkout_url
-        label: Tested hosted payment link (https)
+        label: Tested hosted checkout URL (https, optional for preview)
         type: string
-        required: true
+        required: false
         description: Use YOUR verified per-product PayPal or approved gateway checkout link. Not a CJ supplier or Amazon link.
       - name: shipping_details
         label: Verified US shipping information
         type: text
-        required: true
+        required: false
       - name: return_details
         label: Your customer return and refund conditions
         type: text
-        required: true
+        required: false
       - name: sku
         label: Internal CJ SKU / sourcing reference (optional)
         type: string
       - name: featured
         label: Feature product first
         type: boolean
-      - name: published
-        label: Publish as purchasable product
+      - name: ready_to_sell
+        label: Enable purchase button (only after payment, stock and policies are verified)
         type: boolean
-        description: Enable ONLY after checkout, USD amount, warehouse, stock, shipping, returns and fulfillment have been tested.
+        description: Leave off for a preview. When enabled, valid USD price, HTTPS checkout link, shipping and return terms are all required.
+      - name: published
+        label: Show in storefront catalog
+        type: boolean
+        description: A published product may be a non-purchasable preview; Buy securely appears only when ready_to_sell is enabled and all required sale details are complete.
       - name: body
         label: Private editorial notes (no secrets)
         type: rich-text

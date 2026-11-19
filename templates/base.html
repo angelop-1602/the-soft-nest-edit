@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/assets/styles.css" />
   <link rel="stylesheet" href="/assets/motion.css" />
   <link rel="stylesheet" href="/assets/shopfront.css" />
+  <link rel="stylesheet" href="/assets/store-enhancements.css" />
   <meta property="og:type" content="{% if page=='article' %}article{% else %}website{% endif %}" />
   <meta property="og:title" content="{{ title }}" />
   <meta property="og:description" content="{{ description }}" />
@@ -44,12 +45,12 @@
       <button class="mobile-toggle" type="button" aria-expanded="false" aria-label="Toggle menu" aria-controls="site-nav"><span></span><span></span><span></span></button>
       <nav id="site-nav" class="nav" aria-label="Primary navigation">
         <a {% if page=='home' %}class="active"{% endif %} href="/">Home</a>
-        <a {% if page=='shop' %}class="active"{% endif %} href="/shop/">Shop</a>
+        <a {% if page in ('shop', 'saved') %}class="active"{% endif %} href="/shop/">Shop</a>
         <a href="/shop/#all-collections">All categories</a>
         <a {% if page=='journal' or page=='article' %}class="active"{% endif %} href="/journal/">The Journal</a>
         <a {% if page=='about' %}class="active"{% endif %} href="/about/">Our Story</a>
       </nav>
-      <div class="header-right"><span class="vertical-line"></span><a class="header-cta" href="/shop/">Shop decor <span aria-hidden="true">↗</span></a></div>
+      <div class="header-right"><a class="store-save-nav" href="/shop/saved/" aria-label="View saved home decor">Saved <span class="store-save-count" id="saved-count">0</span></a><span class="vertical-line"></span><a class="header-cta" href="/shop/">Shop decor <span aria-hidden="true">↗</span></a></div>
     </div>
   </header>
   <main id="main">{% block content %}{% endblock %}</main>
