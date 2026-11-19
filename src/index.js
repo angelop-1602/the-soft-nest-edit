@@ -6,6 +6,28 @@ import { getCatalogPreview, parsePreviewPage } from './catalog-preview.js';
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    // TEMPORARY: PayPal runtime binding diagnostic. No credentials or values leave the Worker.
+    // Remove this route after verifying the environment, before enabling live checkout.
+    if (url.pathname === '/api/paypal/sandbox/diagnostic') {
+      if (request.method !== 'GET') {
+        return new Response('Method not allowed', { status: 405, headers: { 'Allow': 'GET' } });
+      }
+      const checks = {
+        paypalModeIsSandbox: env.PAYPAL_MODE === 'sandbox',
+        checkoutSwitchIsTrue: env.PAYPAL_SANDBOX_CHECKOUT_ENABLED === 'true',
+        sandboxClientIdAvailable: typeof env.PAYPAL_SANDBOX_CLIENT_ID === 'string' && env.PAYPAL_SANDBOX_CLIENT_ID.trim().length > 0,
+        sandboxClientSecretAvailable: typeof env.PAYPAL_SANDBOX_CLIENT_SECRET === 'string' && env.PAYPAL_SANDBOX_CLIENT_SECRET.trim().length > 0,
+        d1BindingAvailable: Boolean(env.DB && typeof env.DB.prepare === 'function')
+      };
+      return Response.json({
+        diagnostic: 'temporary_paypal_sandbox_runtime_check',
+        configured: Object.values(checks).every(Boolean), checks
+      }, { headers: {
+        'Cache-Control': 'no-store',
+        'X-Robots-Tag': 'noindex, nofollow',
+        'Referrer-Policy': 'no-referrer'
+      } });
+    }
     if (url.pathname.startsWith('/api/paypal/sandbox/')) {
       const route = url.pathname.slice('/api/paypal/sandbox/'.length);
       return handleSandboxPaypal(request, env, route);

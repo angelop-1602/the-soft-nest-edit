@@ -20,5 +20,15 @@
     "crons": [
       "0 */6 * * *"
     ]
+  },
+  "observability": {
+    "logs": {
+      "enabled": false,
+      "invocation_logs": true
+    }
+  },
+  "vars": {
+    "PAYPAL_MODE": "sandbox",
+    "PAYPAL_SANDBOX_CHECKOUT_ENABLED": "true"
   }
 }
