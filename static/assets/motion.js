@@ -38,6 +38,13 @@
 
   const selectors = [
     '.intro-layout > *',
+    '.filter-bar',
+    '.simple-page > .micro-title',
+    '.simple-page > h1',
+    '.simple-page > p',
+    '.simple-page > .btn',
+    '.legal-page > .prose',
+    '.legal-page > .read-link',
     '.section-heading > *',
     '.category-card',
     '.post-card',
@@ -49,10 +56,22 @@
     '.closing-content',
     '.sub-hero > *',
     '.article-header > *',
+    '.article-body-layout .prose > h2',
+    '.article-body-layout .prose > h3',
+    '.article-body-layout .prose > blockquote',
+    '.article-body-layout .prose > ul',
+    '.article-body-layout .prose > ol',
+    '.article-body-layout .article-end',
     '.article-hero-image',
     '.article-content > .article-disclosure',
     '.article-product-section',
-    '.footer-grid > *'
+    '.curated-products-section > .section-heading',
+    '.curated-products-intro',
+    '.shop-guides-heading',
+    '.shop-disclaimer',
+    '.related-section > .section-heading',
+    '.footer-grid > *',
+    '.footer-bottom'
   ];
   const targets = Array.from(document.querySelectorAll(selectors.join(',')));
   if (!targets.length) return;

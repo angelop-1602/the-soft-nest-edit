@@ -109,6 +109,17 @@ html { scroll-padding-top: 110px; }
   .hero .btn { animation: softnest-rise 640ms both 140ms; }
   .hero-bottom { animation: softnest-rise 640ms both 180ms; }
   .hero-image > img { animation: softnest-image-enter 1150ms both; }
+  /* Consistent first-screen introduction on Journal, Shop, article and static pages.
+     Only transforms/opacity are animated; content stays in the HTML. */
+  .sub-hero .micro-title, .article-header .breadcrumbs,
+  .simple-page > .micro-title { animation: softnest-rise 620ms both 20ms; }
+  .sub-hero h1, .article-header h1,
+  .simple-page > h1 { animation: softnest-rise 680ms both 100ms; }
+  .sub-hero > p, .article-header .article-desc,
+  .simple-page > p, .legal-page > .prose { animation: softnest-rise 700ms both 170ms; }
+  .article-header .article-kicker, .article-header .article-author,
+  .simple-page > .btn, .simple-page > .read-link { animation: softnest-rise 700ms both 210ms; }
+  .article-hero-image > img { animation: softnest-image-enter 1050ms both 100ms; }
   .motion-enabled .reveal-item {
     opacity: 0;
     transform: translate3d(0, 24px, 0);
@@ -171,4 +182,16 @@ html { scroll-padding-top: 110px; }
   .hero .eyebrow, .hero h1, .hero-copy-inner > p, .hero .btn,
   .hero-bottom, .hero-image > img { animation: none !important; }
   .motion-enabled .reveal-item { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+/* Breadcrumbs stay readable with longer post titles on mobile. */
+.breadcrumbs { flex-wrap: wrap; }
+.breadcrumbs [aria-current="page"] { color: var(--dark); max-width: min(380px, 50vw); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) {
+  .sub-hero .micro-title, .sub-hero h1, .sub-hero > p,
+  .article-header .breadcrumbs, .article-header .article-kicker,
+  .article-header h1, .article-header .article-desc, .article-header .article-author,
+  .simple-page > .micro-title, .simple-page > h1, .simple-page > p,
+  .simple-page > .btn, .simple-page > .read-link, .legal-page > .prose,
+  .article-hero-image > img { animation: none !important; }
 }
