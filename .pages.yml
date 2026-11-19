@@ -29,6 +29,12 @@ content:
         required: true
         options:
           format: yyyy-MM-dd
+      - name: updated
+        label: Last substantial update (optional)
+        type: date
+        description: Set only if you materially update the article. Used in structured data and sitemap.
+        options:
+          format: yyyy-MM-dd
       - name: category
         label: Category
         type: select

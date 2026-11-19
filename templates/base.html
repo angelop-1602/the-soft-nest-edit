@@ -18,9 +18,17 @@
   <meta property="og:title" content="{{ title }}" />
   <meta property="og:description" content="{{ description }}" />
   <meta property="og:url" content="{{ canonical }}" />
-  {% if og_image %}<meta property="og:image" content="{{ og_image }}" />{% endif %}
+  <meta property="og:site_name" content="{{ site.name }}" />
+  <meta property="og:locale" content="en_US" />
+  {% if og_image %}
+  <meta property="og:image" content="{{ og_image }}" />
+  {% if og_image_alt %}<meta property="og:image:alt" content="{{ og_image_alt }}" />{% endif %}
+  <meta name="twitter:image" content="{{ og_image }}" />
+  {% endif %}
   <meta name="twitter:card" content="summary_large_image" />
-  {% if page=='admin' %}<meta name="robots" content="noindex,nofollow" />{% endif %}
+  {% if page in ('admin', '404') %}<meta name="robots" content="noindex,nofollow" />{% endif %}
+  <link rel="alternate" type="application/rss+xml" title="The Soft Nest Edit Journal" href="/rss.xml" />
+  {% if page == 'home' %}<script type="application/ld+json">{{ website_jsonld | tojson }}</script>{% endif %}
   {% block jsonld %}{% endblock %}
 </head>
 <body>
