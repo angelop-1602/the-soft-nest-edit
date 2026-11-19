@@ -17,8 +17,13 @@ export const ADMIN_HEADERS = {
 };
 export const adminReply = (value, status = 200) =>
   Response.json(value, { status, headers: ADMIN_HEADERS });
-const unauthorized = () =>
-  new CommerceError('admin_unauthorized', 'Administrator sign-in is required.', 401);
+// Temporary diagnostics stay outside Error properties and public API serialization.
+const failureReasons = new WeakMap();
+const unauthorized = (reason = 'JWT_MALFORMED') => {
+  const error = new CommerceError('admin_unauthorized', 'Administrator sign-in is required.', 401);
+  failureReasons.set(error, reason);
+  return error;
+};
 export function decodePart(text) {
   if (typeof text !== 'string' || !/^[A-Za-z0-9_-]+$/.test(text)) throw unauthorized();
   try {
@@ -50,11 +55,11 @@ export function parseJwt(token) {
 }
 export function checkClaims(claims, issuer, audience, now = Math.floor(Date.now() / 1000)) {
   const aud = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
+  if (claims.iss !== issuer) throw unauthorized('JWT_ISSUER_MISMATCH');
+  if (!aud.includes(audience)) throw unauthorized('JWT_AUDIENCE_MISMATCH');
+  if (!Number.isInteger(claims.exp)) throw unauthorized('JWT_CLAIMS_INVALID');
+  if (claims.exp <= now) throw unauthorized('JWT_EXPIRED');
   if (
-    claims.iss !== issuer ||
-    !aud.includes(audience) ||
-    !Number.isInteger(claims.exp) ||
-    claims.exp <= now ||
     !Number.isInteger(claims.iat) ||
     claims.iat > now + 30 ||
     claims.exp <= claims.iat ||
@@ -64,7 +69,7 @@ export function checkClaims(claims, issuer, audience, now = Math.floor(Date.now(
     !claims.sub ||
     claims.sub.length > 200
   )
-    throw unauthorized();
+    throw unauthorized('JWT_CLAIMS_INVALID');
 }
 const jwksCache = new Map();
 async function signingKey(issuer, kid) {
@@ -75,22 +80,32 @@ async function signingKey(issuer, kid) {
     cached.expires < now ||
     (!cached.keys.some((k) => k.kid === kid) && now - cached.fetched > 60000)
   ) {
+    let raw;
     try {
       const res = await fetch(issuer + '/cdn-cgi/access/certs', {
         redirect: 'error',
         headers: { Accept: 'application/json' },
         signal: AbortSignal.timeout(8000)
       });
-      if (!res.ok) throw unauthorized();
-      const raw = await res.text();
-      if (raw.length > 131072) throw unauthorized();
+      if (!res.ok) throw unauthorized('SIGNING_KEYS_FETCH_FAILED');
+      raw = await res.text();
+    } catch {
+      throw unauthorized('SIGNING_KEYS_FETCH_FAILED');
+    }
+    try {
+      if (raw.length > 131072) throw unauthorized('SIGNING_KEYS_INVALID');
       const data = JSON.parse(raw);
-      if (!Array.isArray(data.keys) || data.keys.length > 20) throw unauthorized();
+      if (
+        !Array.isArray(data.keys) ||
+        data.keys.length > 20 ||
+        data.keys.some((k) => !k || typeof k !== 'object' || Array.isArray(k))
+      )
+        throw unauthorized('SIGNING_KEYS_INVALID');
       cached = { keys: data.keys, fetched: now, expires: now + 300000 };
       jwksCache.set(issuer, cached);
       if (jwksCache.size > 10) jwksCache.delete(jwksCache.keys().next().value);
     } catch {
-      throw unauthorized();
+      throw unauthorized('SIGNING_KEYS_INVALID');
     }
   }
   const matches = cached.keys.filter(
@@ -100,24 +115,38 @@ async function signingKey(issuer, kid) {
       (!k.alg || k.alg === 'RS256') &&
       (!k.use || k.use === 'sig')
   );
-  if (
-    matches.length !== 1 ||
-    decodePart(matches[0].n).length < 256 ||
-    decodePart(matches[0].n).length > 1024
-  )
-    throw unauthorized();
-  return crypto.subtle.importKey(
-    'jwk',
-    { kty: 'RSA', n: matches[0].n, e: matches[0].e, alg: 'RS256', ext: true },
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    false,
-    ['verify']
-  );
-}
-export async function authenticateAdmin(request, env) {
-  let issuer, allowed;
+  if (matches.length !== 1) throw unauthorized('SIGNING_KEY_NOT_FOUND');
   try {
-    const url = new URL(env.CF_ACCESS_TEAM_DOMAIN);
+    const size = decodePart(matches[0].n).length;
+    if (size < 256 || size > 1024) throw unauthorized('SIGNING_KEY_INVALID');
+    return await crypto.subtle.importKey(
+      'jwk',
+      { kty: 'RSA', n: matches[0].n, e: matches[0].e, alg: 'RS256', ext: true },
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+      false,
+      ['verify']
+    );
+  } catch {
+    throw unauthorized('SIGNING_KEY_INVALID');
+  }
+}
+function setting(env, name, missingReason, invalidReason) {
+  const value = env[name];
+  if (value === undefined || value === null || (typeof value === 'string' && !value.trim()))
+    throw unauthorized(missingReason);
+  if (typeof value !== 'string') throw unauthorized(invalidReason);
+  return value;
+}
+async function validateAccess(request, env) {
+  let issuer, allowed;
+  const team = setting(
+    env,
+    'CF_ACCESS_TEAM_DOMAIN',
+    'CONFIG_TEAM_DOMAIN_MISSING',
+    'CONFIG_TEAM_DOMAIN_INVALID'
+  );
+  try {
+    const url = new URL(team);
     if (
       url.protocol !== 'https:' ||
       !/^[a-z0-9-]+\.cloudflareaccess\.com$/.test(url.hostname) ||
@@ -128,23 +157,39 @@ export async function authenticateAdmin(request, env) {
       url.search ||
       url.hash
     )
-      throw unauthorized();
+      throw unauthorized('CONFIG_TEAM_DOMAIN_INVALID');
     issuer = url.origin;
-    if (!/^[A-Za-z0-9_-]{16,200}$/.test(env.CF_ACCESS_AUD || '')) throw unauthorized();
-    allowed = JSON.parse(env.ADMIN_EMAIL_ALLOWLIST || 'null');
+  } catch {
+    throw unauthorized('CONFIG_TEAM_DOMAIN_INVALID');
+  }
+  const audience = setting(
+    env,
+    'CF_ACCESS_AUD',
+    'CONFIG_AUDIENCE_MISSING',
+    'CONFIG_AUDIENCE_INVALID'
+  );
+  if (!/^[A-Za-z0-9_-]{16,200}$/.test(audience)) throw unauthorized('CONFIG_AUDIENCE_INVALID');
+  const allowlist = setting(
+    env,
+    'ADMIN_EMAIL_ALLOWLIST',
+    'CONFIG_ALLOWLIST_MISSING',
+    'CONFIG_ALLOWLIST_INVALID'
+  );
+  try {
+    allowed = JSON.parse(allowlist);
     if (
       !Array.isArray(allowed) ||
       !allowed.length ||
       allowed.length > 20 ||
       !allowed.every((e) => typeof e === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))
     )
-      throw unauthorized();
+      throw unauthorized('CONFIG_ALLOWLIST_INVALID');
   } catch {
-    throw unauthorized();
+    throw unauthorized('CONFIG_ALLOWLIST_INVALID');
   }
-  const { header, claims, signature, signed } = parseJwt(
-    request.headers.get('Cf-Access-Jwt-Assertion')
-  );
+  const token = request.headers.get('Cf-Access-Jwt-Assertion');
+  if (!token) throw unauthorized('JWT_HEADER_MISSING');
+  const { header, claims, signature, signed } = parseJwt(token);
   if (
     header.alg !== 'RS256' ||
     typeof header.kid !== 'string' ||
@@ -152,24 +197,41 @@ export async function authenticateAdmin(request, env) {
     header.crit !== undefined ||
     (header.typ !== undefined && header.typ !== 'JWT')
   )
-    throw unauthorized();
-  checkClaims(claims, issuer, env.CF_ACCESS_AUD);
+    throw unauthorized('JWT_HEADER_INVALID');
+  checkClaims(claims, issuer, audience);
+  const key = await signingKey(issuer, header.kid);
   let valid = false;
   try {
-    valid = await crypto.subtle.verify(
-      'RSASSA-PKCS1-v1_5',
-      await signingKey(issuer, header.kid),
-      signature,
-      signed
-    );
+    valid = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature, signed);
   } catch {}
-  if (!valid || claims.type !== 'app' || typeof claims.email !== 'string') throw unauthorized();
+  if (!valid) throw unauthorized('JWT_SIGNATURE_INVALID');
+  if (claims.type !== 'app' || typeof claims.email !== 'string')
+    throw unauthorized('JWT_CLAIMS_INVALID');
   const email = claims.email.toLowerCase();
-  if (!allowed.map((e) => e.toLowerCase()).includes(email))
-    throw new CommerceError(
+  if (!allowed.map((e) => e.toLowerCase()).includes(email)) {
+    const error = new CommerceError(
       'admin_forbidden',
       'This identity is not authorized for product administration.',
       403
     );
+    failureReasons.set(error, 'IDENTITY_NOT_ALLOWED');
+    throw error;
+  }
   return { sub: claims.sub, email, source: 'cloudflare_access' };
+}
+export async function authenticateAdmin(request, env) {
+  try {
+    return await validateAccess(request, env);
+  } catch (error) {
+    // Never pass request, settings, claims, key data or Error objects to a logger.
+    // The switch is server-only and cannot be enabled through request input.
+    if (env.ADMIN_AUTH_DIAGNOSTICS_ENABLED === 'true') {
+      try {
+        console.warn('ADMIN_AUTH_' + (failureReasons.get(error) || 'INTERNAL_FAILURE'));
+      } catch {
+        // Logging must never change the authentication decision.
+      }
+    }
+    throw error;
+  }
 }

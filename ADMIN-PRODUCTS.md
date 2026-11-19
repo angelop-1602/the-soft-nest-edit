@@ -95,9 +95,91 @@ frame denial, a restrictive CSP and no-referrer. Admin JSON contains supplier
 costs intentionally; public APIs do not. No API key, JWT, CJ token or payment
 profile is returned or recorded in history.
 
+### Temporary diagnosis of Access Allowed followed by Worker 401
+
+An Access **Allowed** event and the Worker's JWT validation are separate checks.
+Both `/admin/products/` and `/api/admin/session` intentionally return the same
+generic `admin_unauthorized` response for every authentication failure. There is
+no diagnostics API, response header or browser-controlled logging switch.
+
+For a short investigation, set the **server-side Worker binding**
+`ADMIN_AUTH_DIAGNOSTICS_ENABLED` to the literal string `true` on the intended
+environment. For local production-entry tests it can be set in `.dev.vars`;
+the dedicated `--admin` entry uses its separate local authentication instead.
+It is disabled when absent, `false`, or any value other than the string `true`.
+Do not change the three required Access settings just to enable diagnostics.
+Publishing this code or changing remote settings requires deployment approval;
+neither was performed during this investigation.
+
+With Workers Logs enabled, filter the Worker's private Observability logs for
+`ADMIN_AUTH_`, then reproduce the failure once on each protected route. Live
+logs are also available with `npx wrangler tail --search ADMIN_AUTH_ --format pretty`.
+The application emits one warning containing **only one fixed reason code** per
+failed authentication attempt. Inspect the console message only; Cloudflare's
+surrounding invocation metadata is separate. Do not copy request headers,
+cookies, JWTs, identity data, raw tail events or configuration values into reports.
+Successful authentications produce no diagnostic messages.
+
+| Safe console reason code | Meaning / next check |
+| --- | --- |
+| `ADMIN_AUTH_CONFIG_TEAM_DOMAIN_MISSING` / `ADMIN_AUTH_CONFIG_TEAM_DOMAIN_INVALID` | Missing or malformed `CF_ACCESS_TEAM_DOMAIN`; use the exact HTTPS team origin. |
+| `ADMIN_AUTH_CONFIG_AUDIENCE_MISSING` / `ADMIN_AUTH_CONFIG_AUDIENCE_INVALID` | Missing or malformed `CF_ACCESS_AUD`; use one application's AUD tag. |
+| `ADMIN_AUTH_CONFIG_ALLOWLIST_MISSING` / `ADMIN_AUTH_CONFIG_ALLOWLIST_INVALID` | Missing or malformed JSON `ADMIN_EMAIL_ALLOWLIST`; use an array of 1–20 valid addresses. |
+| `ADMIN_AUTH_JWT_HEADER_MISSING` | Access assertion header did not reach the Worker; verify application path/hostname coverage and that the policy is Allow. An email header or cookie alone is insufficient. |
+| `ADMIN_AUTH_JWT_MALFORMED` / `ADMIN_AUTH_JWT_HEADER_INVALID` | Malformed JWT or rejected algorithm/key ID/header; RS256 is still required. |
+| `ADMIN_AUTH_JWT_ISSUER_MISMATCH` | Token issuer differs from the configured team origin. |
+| `ADMIN_AUTH_JWT_AUDIENCE_MISMATCH` | Token AUD does not include the configured application AUD; confirm both private paths use that application. |
+| `ADMIN_AUTH_JWT_EXPIRED` | Token expired; reauthenticate. |
+| `ADMIN_AUTH_JWT_CLAIMS_INVALID` | A required claim failed validation: issued-at, not-before, subject, application type, email presence, or lifetime. Keep the documented one-hour Access session; this Worker still rejects lifetimes over 24 hours. |
+| `ADMIN_AUTH_SIGNING_KEYS_FETCH_FAILED` | Team certs request failed, timed out, or returned a non-success status. |
+| `ADMIN_AUTH_SIGNING_KEYS_INVALID` | Signing-key response was malformed or outside the existing size/key-count limits. |
+| `ADMIN_AUTH_SIGNING_KEY_NOT_FOUND` / `ADMIN_AUTH_SIGNING_KEY_INVALID` | JWT key ID has no unique acceptable RSA key, or key validation/import failed; check team configuration and signing-key rotation. |
+| `ADMIN_AUTH_JWT_SIGNATURE_INVALID` | RSA verification failed or the verification operation threw. |
+| `ADMIN_AUTH_IDENTITY_NOT_ALLOWED` | A verified identity is absent from the administrator allowlist; still HTTP 403. |
+| `ADMIN_AUTH_INTERNAL_FAILURE` | Unexpected authentication exception; no exception text or private details are logged. |
+
+Only the **first** failed check is reported. Claim-related reasons describe a
+rejected input; they do not assert that its signature has been verified. Signing
+keys remain pinned to the configured team's HTTPS certs endpoint, with the same
+five-minute cache, one-minute unknown-key refresh cooldown and eight-second
+timeout. No issuer, audience, expiration, signature, allowlist or CSRF check is
+bypassed. The minimal error-handling correction keeps signing-key failures out
+of the old catch-all signature-verification block, so they can be distinguished.
+
+Read-only inspection during this investigation found all three auth bindings
+on the active deployment, and the two plain-text bindings passed the existing
+team-origin/AUD format rules. Secret values were not retrieved. This does not
+establish that those settings match a failing token or that the secret allowlist
+is valid. No failing production JWT was inspected, and no evidence yet supports
+changing a particular authentication requirement or production setting.
+
+**Remove logging afterward:** remove `ADMIN_AUTH_DIAGNOSTICS_ENABLED` or set it
+to `false` in the same environment and in any persistent Wrangler configuration.
+Recheck that denied requests still return 401 without a diagnostic warning.
+For complete source removal later, delete the temporary `console.warn` branch
+inside `authenticateAdmin`; the validation logic does not depend on logging.
+Keep any existing account observability settings unless you separately intend
+to change their retention. No database migration is needed.
+
+Run the focused checks with:
+
+```powershell
+node --test tests/admin-auth.test.mjs tests/admin-auth-diagnostics.test.mjs
+```
+
+Diagnostics update verification: all **87 Node tests** passed, including the
+12 focused authentication tests. The Python build and all four integration
+scripts passed in an isolated source copy. The production Worker dry-run bundle
+built successfully. No deployment, migration or remote configuration write ran.
+The existing Wrangler configuration emits an `observability.issue_detection`
+unsupported-field warning; its unrelated observability edits were preserved.
+
 Official references checked for this implementation:
 
 - [Access JWT validation](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/)
+- [Access application-token claims](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/application-token/)
+- [Workers Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/)
+- [Real-time Worker logs](https://developers.cloudflare.com/workers/observability/logs/real-time-logs/)
 - [Access application setup](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/)
 - [Public destinations and path coverage](https://developers.cloudflare.com/api/resources/zero_trust/subresources/access/subresources/applications/methods/create/)
 - [Worker-first static asset routing](https://developers.cloudflare.com/workers/static-assets/routing/worker-script/)

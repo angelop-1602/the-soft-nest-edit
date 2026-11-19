@@ -11,6 +11,8 @@ PRODUCT_SANDBOX_CHECKOUT_ENABLED="false"
 CF_ACCESS_TEAM_DOMAIN=""
 CF_ACCESS_AUD=""
 ADMIN_EMAIL_ALLOWLIST='[]'
+# Temporary safe reason-code logs only; leave disabled except during investigation.
+ADMIN_AUTH_DIAGNOSTICS_ENABLED="false"
 # Illustrative policy, NOT approved merchant pricing or a PayPal fee quotation.
 # Replace with your actual fees, buffers, margin and local test spending ceiling.
 RETAIL_PRICING_POLICY='{"version":"review-required-v1","processingFixedCents":49,"processingVariableBps":349,"targetMarginBps":3000,"perItemBufferCents":200,"shippingBufferCents":200,"maxTotalCents":50000}'
