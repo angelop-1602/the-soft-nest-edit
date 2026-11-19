@@ -1,8 +1,14 @@
-# The Soft Nest Edit — Pinterest affiliate blog starter
+# The Soft Nest Edit
 
-An editorial home decor blog with a free GitHub-authenticated content editor. Built as a static Python/Jinja2 site so the public site doesn't require a database or a paid server.
+A Python/Jinja2 home decor shop and journal with Cloudflare Worker APIs, D1, CJ catalog staging and PayPal Sandbox tests. Customer checkout and supplier purchases remain disabled.
+
+See [COMMERCE-DEVELOPMENT.md](COMMERCE-DEVELOPMENT.md) for the local watcher, isolated D1 migration commands, pricing policy, shipping estimates and tests. The static starter instructions below cover the journal and editorial content.
 
 ## What's included
+
+The private Product Atelier at `/admin/products/` adds supplier verification,
+pricing, quality reviews and audited approvals. See [ADMIN-PRODUCTS.md](ADMIN-PRODUCTS.md)
+for Access configuration, local administrator sign-in, migrations and staging commands.
 
 - Responsive editorial homepage, journal, category and article pages
 - Three sample long-form blog articles, ready to edit
@@ -89,7 +95,7 @@ If the build errors because Python tooling is unavailable in your particular bui
 ## Tech details
 
 - Python: PyYAML, Jinja2, Mistune
-- No client framework, no application server, no database, no login credentials in the public site
+- No client framework; static pages plus Cloudflare Workers/D1 APIs, with secrets kept server-side
 - CSS and JS in `static/assets/`
 - Source code and content remain portable across static hosts
 
@@ -97,7 +103,7 @@ If the build errors because Python tooling is unavailable in your particular bui
 
 - Pages CMS requires GitHub authorization and availability of the third-party hosted CMS service.
 - Deployment to Cloudflare and GitHub cannot be completed from a ZIP file alone. You must connect your own accounts.
-- The website is not an e-commerce checkout and does not manage affiliate sales or commissions.
+- Customer checkout and CJ purchases remain disabled; product checkout foundations are Sandbox-only. Affiliate sales and commissions are managed by the linked merchants.
 - Blog comment forms, newsletter backend, and on-site analytics are intentionally not enabled in the starter.
 - Affiliate products are editorial content entries, not a checkout or an inventory-management system.
 

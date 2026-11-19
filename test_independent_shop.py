@@ -28,7 +28,7 @@ def sitemap(root):
 
 with tempfile.TemporaryDirectory(prefix='softnest-custom-store-') as folder:
     root = Path(folder) / 'site'
-    shutil.copytree(SOURCE, root, ignore=shutil.ignore_patterns('dist', '.git', '__pycache__', 'uploads', '*.pyc'))
+    shutil.copytree(SOURCE, root, ignore=shutil.ignore_patterns('dist', '.git', '.local', '.wrangler', '.dev.vars*', '.env*', '__pycache__', 'uploads', '*.pyc'))
     directory = root / 'content/store-products'
     directory.mkdir(parents=True, exist_ok=True)
     (directory / 'preview-vase.md').write_text('''---

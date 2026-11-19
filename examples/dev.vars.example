@@ -1,0 +1,16 @@
+# Copy only the settings you need into .dev.vars; never commit real values.
+CJDROPSHIPPING_API=""
+PAYPAL_MODE="sandbox"
+PAYPAL_SANDBOX_CHECKOUT_ENABLED="true"
+PAYPAL_SANDBOX_CLIENT_ID=""
+PAYPAL_SANDBOX_CLIENT_SECRET=""
+# Product-based Sandbox also requires a localhost/127.0.0.1 request.
+PRODUCT_SANDBOX_CHECKOUT_ENABLED="false"
+# Configure an Access application for production/staging administrator access.
+# Local testing uses: python dev.py --admin --port 8791
+CF_ACCESS_TEAM_DOMAIN=""
+CF_ACCESS_AUD=""
+ADMIN_EMAIL_ALLOWLIST='[]'
+# Illustrative policy, NOT approved merchant pricing or a PayPal fee quotation.
+# Replace with your actual fees, buffers, margin and local test spending ceiling.
+RETAIL_PRICING_POLICY='{"version":"review-required-v1","processingFixedCents":49,"processingVariableBps":349,"targetMarginBps":3000,"perItemBufferCents":200,"shippingBufferCents":200,"maxTotalCents":50000}'

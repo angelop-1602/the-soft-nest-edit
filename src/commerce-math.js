@@ -26,9 +26,9 @@ export function suggestedRetailCents({
   if (!cents.every(v => Number.isSafeInteger(v) && v >= 0)
     || !bps.every(v => Number.isSafeInteger(v) && v >= 0 && v < 10000)
     || processingVariableBps + targetMarginBps >= 9500) return null;
-  const fixed = cents.reduce((a, b) => a + b, 0);
-  const denominator = 10000 - processingVariableBps - targetMarginBps;
-  const result = Math.ceil(fixed * 10000 / denominator);
+  const fixed = cents.reduce((a, b) => a + BigInt(b), 0n);
+  const denominator = BigInt(10000 - processingVariableBps - targetMarginBps);
+  const result = Number((fixed * 10000n + denominator - 1n) / denominator);
   return Number.isSafeInteger(result) && result > 0 && result <= 999999999 ? result : null;
 }
 

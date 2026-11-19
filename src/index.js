@@ -3,11 +3,21 @@ import { handleCheckoutReadiness } from './cart-readiness.js';
 import { catalogStatus, syncCjCatalog } from './cj-sync.js';
 import { handleSandboxPaypal } from './paypal-sandbox.js';
 import { getCatalogPreview, parsePreviewPage } from './catalog-preview.js';
+import { handleCommerce } from './commerce-api.js';
+import { handleProductSandbox } from './product-sandbox.js';
+import { handleAuthenticatedAdmin, isAdminPath } from './admin-products-api.js';
 
 /** The Soft Nest Edit Worker — static storefront plus server-only APIs. */
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (isAdminPath(url.pathname)) return handleAuthenticatedAdmin(request, env);
+    if (url.pathname.startsWith('/api/commerce/')) {
+      return handleCommerce(request, env, url.pathname.slice('/api/commerce/'.length));
+    }
+    if (url.pathname.startsWith('/api/paypal/product-sandbox/')) {
+      return handleProductSandbox(request, env, url.pathname.slice('/api/paypal/product-sandbox/'.length));
+    }
     if (url.pathname.startsWith('/api/paypal/sandbox/')) {
       const route = url.pathname.slice('/api/paypal/sandbox/'.length);
       return handleSandboxPaypal(request, env, route);

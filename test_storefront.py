@@ -48,7 +48,7 @@ for c in CATALOG:
 
 with tempfile.TemporaryDirectory(prefix='softnest-store-test-') as tmp:
     temp = Path(tmp) / 'site'
-    shutil.copytree(ROOT, temp, ignore=shutil.ignore_patterns('dist', '.git', '__pycache__', 'uploads', '*.pyc'))
+    shutil.copytree(ROOT, temp, ignore=shutil.ignore_patterns('dist', '.git', '.local', '.wrangler', '.dev.vars*', '.env*', '__pycache__', 'uploads', '*.pyc'))
     (temp / 'content/store-products/test-lamp.md').write_text('''---
 title: Test Interior Floor Lamp
 category: Lighting & Lamps

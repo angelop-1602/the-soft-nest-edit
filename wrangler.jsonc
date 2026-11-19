@@ -6,7 +6,9 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "run_worker_first": [
-      "/api/*"
+      "/api/*",
+      "/admin/products",
+      "/admin/products/*"
     ]
   },
   "d1_databases": [
@@ -28,6 +30,7 @@
     }
   },
   "vars": {
+    "PRODUCT_SANDBOX_CHECKOUT_ENABLED": "false",
     "PAYPAL_MODE": "sandbox",
     "PAYPAL_SANDBOX_CHECKOUT_ENABLED": "true"
   }

@@ -4,12 +4,37 @@
 <section class="shell cj-cart-page" aria-labelledby="cj-cart-title">
   <p class="micro-title">THE SOFT NEST EDIT / DEVELOPMENT PREVIEW</p>
   <h1 id="cj-cart-title">Your <em>planning cart.</em></h1>
-  <p class="cj-cart-lead">Choose CJ product variants and plan quantities. This is a demonstration cart, not an active checkout. Product prices, stock, shipping, returns and supplier fulfillment must be verified before purchases can open.</p>
+  <p class="cj-cart-lead">A considered selection for your home. Review your variants, adjust quantities and explore US shipping estimates as products become verified.</p>
   <p class="cj-cart-alert" role="status" id="cj-cart-status">Loading your saved selections…</p>
-  <div id="cj-cart-lines" class="cj-cart-lines"></div>
+  <div class="cj-cart-layout">
+  <div><div id="cj-cart-lines" class="cj-cart-lines"></div>
   <div class="cj-cart-actions">
     <a class="btn btn-dark" href="/shop/catalog-preview/">Browse CJ previews <span aria-hidden="true">↗</span></a>
     <button type="button" class="cj-cart-clear" id="cj-cart-clear">Clear selections</button>
+  </div>
+  </div>
+  <aside class="cj-cart-summary" aria-labelledby="cj-summary-title">
+    <p class="micro-title">YOUR SELECTION</p>
+    <h2 id="cj-summary-title">The details</h2>
+    <dl class="cj-cart-totals">
+      <div><dt>Subtotal</dt><dd id="cj-subtotal">Awaiting verification</dd></div>
+      <div><dt>Estimated shipping</dt><dd id="cj-shipping">Enter a ZIP code</dd></div>
+      <div class="cj-cart-total"><dt>Estimated total</dt><dd id="cj-total">—</dd></div>
+    </dl>
+    <form id="cj-shipping-form" class="cj-shipping-form">
+      <label for="cj-destination-zip">US delivery ZIP code</label>
+      <div class="cj-zip-row"><input id="cj-destination-zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}(-[0-9]{4})?" maxlength="10" placeholder="e.g. 10001" required aria-describedby="cj-shipping-note" /><button class="cj-cart-btn" id="cj-quote-button" type="submit" disabled>Estimate</button></div>
+      <p id="cj-shipping-note">Estimates become available after product, pricing and inventory checks pass. Taxes are not calculated.</p>
+    </form>
+    <p id="cj-shipping-status" role="status" aria-live="polite"></p>
+    <div id="cj-product-sandbox" hidden>
+      <p class="micro-title">LOCAL SANDBOX TEST</p>
+      <p>Use a PayPal Sandbox buyer account. No merchandise will ship.</p>
+      <button class="cj-cart-btn" id="cj-sandbox-start" type="button" disabled>Test this total in PayPal Sandbox</button>
+      <button class="cj-cart-btn" id="cj-sandbox-capture" type="button" hidden>Verify Sandbox payment</button>
+      <p id="cj-sandbox-status" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
   </div>
   <div class="cj-cart-checkout" role="status"><strong>Checkout is not enabled</strong><p>No payment is taken and nothing is sent to CJ. We're preparing verified pricing, shipping and secure order creation before opening sales.</p></div>
   <section class="cj-readiness-panel" aria-labelledby="cj-readiness-title">

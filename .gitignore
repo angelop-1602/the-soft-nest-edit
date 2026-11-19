@@ -5,3 +5,13 @@ __pycache__/
 
 # Generated website
 dist/
+
+.dev.vars
+.dev.vars.*
+
+# Local credentials, Worker state, and browser verification artifacts
+.dev.vars*
+.env
+.env.*
+.local/
+.wrangler/

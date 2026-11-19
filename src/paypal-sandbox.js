@@ -75,20 +75,20 @@ async function getAccessToken(env) {
   return data.access_token;
 }
 
-async function paypalRequest(env, path, payload, idempotencyKey) {
+export async function paypalRequest(env, path, payload, idempotencyKey, method='POST') {
   const token = await getAccessToken(env);
   let res;
   try {
     res = await fetch(BASE + path, {
-      method: 'POST',
+      method,
       headers: {
         Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json',
         Accept: 'application/json',
         Prefer: 'return=representation',
-        'PayPal-Request-Id': idempotencyKey
+        ...(idempotencyKey ? { 'PayPal-Request-Id': idempotencyKey } : {})
       },
-      body: JSON.stringify(payload),
+      ...(method==='POST' ? {body: JSON.stringify(payload)} : {}),
       signal: AbortSignal.timeout(15000)
     });
   } catch { throw new SandboxError('PAYPAL_NETWORK'); }

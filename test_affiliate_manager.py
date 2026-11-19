@@ -63,6 +63,10 @@ def test():
         'dist',
         '__pycache__',
         '.git',
+        '.local',
+        '.wrangler',
+        '.dev.vars*',
+        '.env*',
         '*.pyc',
         'uploads'
     )
