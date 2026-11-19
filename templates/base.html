@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="/assets/motion.css" />
   <link rel="stylesheet" href="/assets/shopfront.css" />
   <link rel="stylesheet" href="/assets/store-enhancements.css" />
+  {% if page == 'paypal-sandbox-test' %}<link rel="stylesheet" href="/assets/paypal-sandbox.css" />{% endif %}
   {% if page == 'cj-preview' %}<link rel="stylesheet" href="/assets/catalog-preview.css" />{% endif %}
   <meta property="og:type" content="{% if page=='article' %}article{% else %}website{% endif %}" />
   <meta property="og:title" content="{{ title }}" />
@@ -70,6 +71,7 @@
   </footer>
   <script src="/assets/site.js" defer></script>
   <script src="/assets/shopfront.js" defer></script>
+  {% if page == 'paypal-sandbox-test' %}<script src="/assets/paypal-sandbox.js" defer></script>{% endif %}
   {% if page == 'cj-preview' %}<script src="/assets/catalog-preview.js" defer></script>{% endif %}
   <script src="/assets/motion.js" defer></script>
 </body>

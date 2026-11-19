@@ -1,10 +1,15 @@
 import { catalogStatus, syncCjCatalog } from './cj-sync.js';
+import { handleSandboxPaypal } from './paypal-sandbox.js';
 import { getCatalogPreview, parsePreviewPage } from './catalog-preview.js';
 
 /** The Soft Nest Edit Worker — static storefront plus server-only APIs. */
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname.startsWith('/api/paypal/sandbox/')) {
+      const route = url.pathname.slice('/api/paypal/sandbox/'.length);
+      return handleSandboxPaypal(request, env, route);
+    }
     if (url.pathname === '/api/health') {
       if (request.method !== 'GET') {
         return new Response('Method not allowed', { status: 405 });

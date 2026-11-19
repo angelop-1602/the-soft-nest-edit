@@ -333,6 +333,10 @@ for item in store_products:
            og_image=item['image'], og_image_alt=item['image_alt'],
            store_product_jsonld=store_product_schema(item),
            noindex=not item['is_purchasable'])
+render('shop/checkout-test', 'store_paypal_sandbox.html',
+       title='PayPal Sandbox Checkout Test | The Soft Nest Edit',
+       description='Sandbox-only test of PayPal payment integration. No products sold.',
+       page='paypal-sandbox-test', noindex=True)
 render('shop/saved', 'store_saved.html', title='Saved Home Decor | The Soft Nest Edit',
        description='Your saved home decor ideas from The Soft Nest Edit.',
        page='saved', noindex=True,

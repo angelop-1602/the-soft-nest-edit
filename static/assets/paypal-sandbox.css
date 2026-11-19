@@ -1,0 +1,15 @@
+.paypal-sandbox{max-width:860px;padding-top:65px;padding-bottom:120px;min-height:65vh}
+.paypal-sandbox h1{font:400 clamp(40px,6vw,72px)/1.13 var(--serif);margin:20px 0}
+.paypal-sandbox h1 em{font-weight:400;color:var(--olive)}
+.paypal-sandbox>p{font-size:14px;line-height:1.85;color:var(--muted);max-width:680px}
+.paypal-sandbox-card{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:32px;border:1px solid #d7cfc1;background:#f8f6f1;margin:35px 0 25px}
+.paypal-sandbox-card strong{font:400 26px var(--serif)}
+.paypal-sandbox-card p{font-size:12px;color:var(--muted);margin:10px 0 0}
+.paypal-sandbox-amount{font-size:25px;font-weight:700;white-space:nowrap}
+.paypal-sandbox-amount small{font-size:10px;font-weight:400;color:var(--muted);display:block;margin-top:5px}
+.paypal-sandbox-actions button{cursor:pointer}
+.paypal-sandbox-actions button[disabled]{opacity:.48;cursor:not-allowed}
+.paypal-sandbox-actions button[hidden]{display:none}
+#paypal-sandbox-status{background:#f0f1eb;padding:20px;font-size:12px;margin:25px 0}
+.paypal-sandbox .paypal-sandbox-disclaimer{font-size:11px;color:#756e65;max-width:720px;margin-bottom:30px}
+@media(max-width:620px){.paypal-sandbox{padding-top:25px;padding-bottom:70px}.paypal-sandbox-card{flex-direction:column;align-items:flex-start;padding:23px}}
