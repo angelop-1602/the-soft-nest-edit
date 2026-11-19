@@ -315,6 +315,10 @@ render('shop', 'shop.html',
        title='Shop Home Decor by Category | The Soft Nest Edit',
        description='Browse curated home decor, from furniture and lighting to wall art, mirrors, rugs and outdoor accents. Explore 24 collections.',
        page='shop')
+render('shop/catalog-preview', 'store_cj_preview.html',
+       title='CJ Catalog Staging Preview | The Soft Nest Edit',
+       description='Unpriced supplier record preview before product approval.',
+       page='cj-preview', noindex=True)
 for collection in STORE_CATEGORIES:
     matches = [item for item in store_products if item['category_slug'] == collection['slug']]
     render(f"shop/category/{collection['slug']}", 'store_category.html',

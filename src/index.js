@@ -1,4 +1,5 @@
 import { catalogStatus, syncCjCatalog } from './cj-sync.js';
+import { getCatalogPreview, parsePreviewPage } from './catalog-preview.js';
 
 /** The Soft Nest Edit Worker — static storefront plus server-only APIs. */
 export default {
@@ -34,6 +35,33 @@ export default {
       } catch {
         return Response.json({ error: 'Catalog sync database not initialized' }, {
           status: 503, headers: { 'Cache-Control': 'no-store' }
+        });
+      }
+    }
+    if (url.pathname === '/api/catalog/preview') {
+      if (request.method !== 'GET') {
+        return new Response('Method not allowed', {
+          status: 405, headers: { 'Allow': 'GET', 'Cache-Control': 'no-store' }
+        });
+      }
+      const page = parsePreviewPage(url.searchParams.get('page'));
+      if (page === null) {
+        return Response.json({ error: 'Invalid page number' }, {
+          status: 400, headers: { 'Cache-Control': 'no-store' }
+        });
+      }
+      try {
+        if (!env.DB) throw new Error('D1 missing');
+        return Response.json(await getCatalogPreview(env.DB, page), {
+          headers: {
+            'Cache-Control': 'no-store',
+            'X-Robots-Tag': 'noindex, nofollow',
+            'Referrer-Policy': 'no-referrer'
+          }
+        });
+      } catch {
+        return Response.json({ error: 'Catalog preview unavailable' }, {
+          status: 503, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' }
         });
       }
     }
