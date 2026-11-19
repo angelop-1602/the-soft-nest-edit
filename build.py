@@ -24,6 +24,74 @@ CATEGORY_IMAGES = {
   'Lifestyle': 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=960&q=78',
 }
 
+
+# SOFTNEST_STOREFRONT_24_V1 — separate owned-store inventory from Journal affiliate links.
+STORE_CATEGORIES = yaml.safe_load((ROOT / 'data/shop_categories.yml').read_text(encoding='utf-8'))
+STORE_CATEGORY_BY_NAME = {c['name']: c for c in STORE_CATEGORIES}
+STORE_CATEGORY_BY_SLUG = {c['slug']: c for c in STORE_CATEGORIES}
+
+
+def load_store_product(path):
+    """A product is purchasable only after complete, deliberately published details exist."""
+    from decimal import Decimal, InvalidOperation
+    raw = path.read_text(encoding='utf-8')
+    chunks = raw.split('---', 2)
+    if len(chunks) != 3 or chunks[0].strip():
+        raise ValueError(f'{path}: expected YAML front matter')
+    meta = yaml.safe_load(chunks[1]) or {}
+    if meta.get('published') is not True:
+        return None
+    required = ('title', 'category', 'subcategory', 'image', 'image_alt', 'summary',
+                'checkout_url', 'shipping_details', 'return_details', 'price_usd')
+    if any(not str(meta.get(key) or '').strip() for key in required):
+        print(f'Warning: {path.name} incomplete — published store listing skipped')
+        return None
+    category = STORE_CATEGORY_BY_NAME.get(meta['category'])
+    if not category or meta['subcategory'] not in category['subcategories']:
+        print(f'Warning: {path.name} has unsupported category/subcategory — skipped')
+        return None
+    slug = path.stem
+    if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', slug):
+        print(f'Warning: {path.name} has invalid slug — skipped')
+        return None
+    url = str(meta['checkout_url']).strip()
+    parsed = urlparse(url)
+    if (parsed.scheme != 'https' or not parsed.netloc or parsed.username or parsed.password
+            or any(char.isspace() for char in url)):
+        print(f'Warning: {path.name} has invalid HTTPS checkout URL — skipped')
+        return None
+    image = str(meta['image']).strip()
+    image_uri = urlparse(image)
+    if not (image.startswith('/uploads/') or (image_uri.scheme == 'https' and image_uri.netloc)):
+        print(f'Warning: {path.name} has invalid image URL — skipped')
+        return None
+    try:
+        price = Decimal(str(meta['price_usd']))
+        if not price.is_finite() or price <= 0 or price.as_tuple().exponent < -2:
+            raise InvalidOperation
+    except (InvalidOperation, ValueError, TypeError):
+        print(f'Warning: {path.name} has invalid USD price — skipped')
+        return None
+    return {**meta, 'slug': slug, 'category_slug': category['slug'],
+            'url': f'/shop/product/{slug}/', 'checkout_url': url,
+            'price_display': format(price, '.2f'),
+            'featured': meta.get('featured') is True, 'sku': str(meta.get('sku') or '').strip()}
+
+
+store_product_dir = ROOT / 'content/store-products'
+store_products = [item for file in store_product_dir.glob('*.md')
+                  if (item := load_store_product(file))]
+store_products.sort(key=lambda item: (not item['featured'], item['title'].lower()))
+
+
+def store_product_schema(item):
+    return {'@context': 'https://schema.org', '@type': 'Product',
+            'name': item['title'], 'description': item['summary'],
+            'image': [absolute_url(item['image'])],
+            'sku': item.get('sku') or item['slug'],
+            'offers': {'@type': 'Offer', 'url': BASE_URL + item['url'],
+                       'priceCurrency': 'USD', 'price': item['price_display']}}
+
 def load_product(path):
     """Return a publicly eligible product, or None for drafts/incomplete entries.
 
@@ -205,7 +273,9 @@ def render(path, template='page.html', **params):
         og_image_alt=image_alt, full_url=full_url, website_jsonld=website_schema(),
         posts=posts, featured=[x for x in posts if x.get('featured',False)],
         products=products, featured_products=[p for p in products if p['featured_shop']],
-        categories=CATEGORIES, category_images=CATEGORY_IMAGES, year=date.today().year)
+        categories=CATEGORIES, category_images=CATEGORY_IMAGES, year=date.today().year,
+        store_categories=STORE_CATEGORIES, store_products=store_products,
+        featured_store_products=[p for p in store_products if p['featured']])
     context.update(params)
     output = ENV.get_template(template).render(**context)
     target = DIST / path / 'index.html' if path else DIST / 'index.html'
@@ -213,7 +283,7 @@ def render(path, template='page.html', **params):
     target.write_text(output,encoding='utf-8')
     return url
 
-render('', 'home.html', title='The Soft Nest Edit | Cozy home decor, thoughtfully styled', page='home')
+render('', 'home.html', title='Shop Home Decor & Read Styling Ideas | The Soft Nest Edit', page='home')
 render('journal','journal.html',title='The Journal | Home Decor Ideas',description='Browse thoughtful decor ideas and easy styling guides for bedrooms, small spaces and cozy living rooms.',page='journal',selected='All',visible_posts=posts)
 for category, slug in CATEGORIES:
     matching=[x for x in posts if x['category']==category]
@@ -223,11 +293,27 @@ for post in posts:
     render(f'journal/{post["slug"]}','article.html',title=post['title']+' | The Soft Nest Edit',description=post['description'], og_image=post['image'], og_image_alt=post['image_alt'],
            page='article', post=post, related=related,
            article_jsonld=article_schema(post), breadcrumb_jsonld=breadcrumbs_for(post))
-render('shop','shop.html', title='Shop the Edit | Thoughtful Decor Finds',description='Explore home decor shopping guides and smart category-by-category ideas for cozy, functional spaces.',page='shop', has_affiliate_products=any(p['affiliate'] for p in products))
+render('shop', 'shop.html',
+       title='Shop Home Decor by Category | The Soft Nest Edit',
+       description='Shop home decor by category: lighting, wall art, mirrors, furniture, rugs, kitchen, bathroom and more. Explore 24 collections at The Soft Nest Edit.',
+       page='shop')
+for collection in STORE_CATEGORIES:
+    matches = [item for item in store_products if item['category_slug'] == collection['slug']]
+    render(f"shop/category/{collection['slug']}", 'store_category.html',
+           title=f"{collection['name']} | Home Decor | The Soft Nest Edit",
+           description=f"Explore {collection['name'].lower()} including {', '.join(collection['subcategories'][:4]).lower()}. Shop decor and browse inspiration at The Soft Nest Edit.",
+           page='shop', store_category=collection, store_category_products=matches,
+           noindex=not matches)
+for item in store_products:
+    render(f"shop/product/{item['slug']}", 'store_product.html',
+           title=f"{item['title']} | The Soft Nest Edit",
+           description=item['summary'], page='shop', store_product=item,
+           og_image=item['image'], og_image_alt=item['image_alt'],
+           store_product_jsonld=store_product_schema(item))
 render('about','simple.html', title='About The Soft Nest Edit | Our Story',
        description='Meet The Soft Nest Edit, a home decor journal sharing approachable decorating advice, cozy room ideas and thoughtful finds.',
        page='about', heading='A home to come back to.', kicker='OUR STORY',
-  body="The Soft Nest Edit is a home decor journal for people who want their spaces to feel calm, cozy and truly their own. We believe thoughtful rooms are made one little decision at a time—not by buying everything new. Here you'll find practical styling ideas, helpful small-space inspiration and carefully considered product categories. We write for real homes, real budgets and the little moments that make a place feel lived in.")
+  body="The Soft Nest Edit is a home decor shop and journal for people who want their spaces to feel calm, cozy and truly their own. We believe thoughtful rooms are made one little decision at a time—not by buying everything new. Here you'll find practical styling ideas, helpful small-space inspiration and carefully considered product categories. We write for real homes, real budgets and the little moments that make a place feel lived in.")
 render('contact','simple.html', title='Contact The Soft Nest Edit',
        description='Connect with The Soft Nest Edit about home decor ideas, editorial content and potential collaborations.',
        page='contact',heading="Let's keep in touch.", kicker='CONTACT',
@@ -237,7 +323,7 @@ render('affiliate-disclosure','legal.html',title='Affiliate Disclosure | The Sof
        page='legal',heading='Affiliate Disclosure',body_html='''<p>The Soft Nest Edit may be supported by affiliate links. Some shopping guides or articles may contain these links. If you click a qualifying affiliate link and make a purchase, we may receive a commission at no additional cost to you.</p><p>When a post contains affiliate links, we aim to make that relationship clear near the recommendation and provide useful context about why a product may suit a particular space. We do not present untested products as personally tested.</p><p>We identify affiliate links near relevant recommendations and in product cards where appropriate. The presence of a product category or store name does not, by itself, imply a paid relationship.</p><p>As an Amazon Associate I earn from qualifying purchases.</p><p>Any claims about product quality, pricing, stock or suitability should be checked on the retailer's official site before purchasing.</p>''')
 render('privacy','legal.html',title='Privacy Policy | The Soft Nest Edit',
        description='Read The Soft Nest Edit privacy policy and how third-party hosting and links may process visitor information.',
-       page='legal',heading='Privacy Policy',body_html='''<p><strong>Last updated:</strong> November 18, 2026</p><p>This starter website is a static information website. It does not create user accounts or collect newsletter signups. We have not installed analytics, advertising cookies or a contact submission service in this starter version.</p><p>Our hosting provider may process routine server and request information as part of delivering the website. We also load example photography from Unsplash and web fonts from Google Fonts; those services can receive requests from a visitor's browser, including network information such as IP address. External websites we link to, including Pinterest and merchants if added later, follow their own privacy policies.</p><p>If we add analytics, forms, comments, advertising or affiliate network tracking, this policy must be reviewed and updated before those features go live. Additional rights or disclosures may apply depending on where visitors are located.</p><p>For questions about personal data, use the business contact information published on our Contact page once available.</p><p><em>This template is not legal advice. Review and tailor it before launching your business.</em></p>''')
+       page='legal',heading='Privacy Policy',body_html='''<p><strong>Last updated:</strong> November 18, 2026</p><p>This website is served as a static storefront and journal. We do not collect payment card details directly. When checkout is available, it takes place through an external payment provider. We may receive customer contact, shipping and order details from that provider and share the information necessary for order fulfillment with our supplier and delivery partners. Review this policy against your actual provider terms before enabling sales.</p><p>Our hosting provider may process routine server and request information as part of delivering the website. We also load example photography from Unsplash and web fonts from Google Fonts; those services can receive requests from a visitor's browser, including network information such as IP address. External websites we link to, including Pinterest and merchants if added later, follow their own privacy policies.</p><p>If we add analytics, forms, comments, advertising or affiliate network tracking, this policy must be reviewed and updated before those features go live. Additional rights or disclosures may apply depending on where visitors are located.</p><p>For questions about personal data, use the business contact information published on our Contact page once available.</p><p><em>This template is not legal advice. Review and tailor it before launching your business.</em></p>''')
 render('admin','admin.html',title='Editor access | The Soft Nest Edit',page='admin')
 render('404','simple.html',title='Page not found | The Soft Nest Edit',
        description='This page is not available. Return to The Soft Nest Edit journal for home decor inspiration.',
@@ -247,7 +333,7 @@ render('404','simple.html',title='Page not found | The Soft Nest Edit',
 # Search engine discovery and feed.
 import xml.etree.ElementTree as ET
 root=ET.Element('urlset',xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
-page_paths=['/','/journal/','/about/','/shop/','/contact/','/affiliate-disclosure/','/privacy/'] + [p['url'] for p in posts] + [f'/category/{slug}/' for _,slug in CATEGORIES]
+page_paths=['/','/journal/','/about/','/shop/','/contact/','/affiliate-disclosure/','/privacy/'] + [p['url'] for p in posts] + [f'/category/{slug}/' for _,slug in CATEGORIES] + [f"/shop/category/{c['slug']}/" for c in STORE_CATEGORIES if any(p['category_slug'] == c['slug'] for p in store_products)] + [p['url'] for p in store_products]
 posts_by_url = {post['url']: post for post in posts}
 for location in page_paths:
     node=ET.SubElement(root,'url')

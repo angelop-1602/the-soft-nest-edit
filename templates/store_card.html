@@ -1,0 +1,8 @@
+{% macro store_card(product) %}
+<article class="store-product-card" data-subcategory="{{ product.subcategory|lower }}">
+  <a class="store-product-image" href="{{ product.url }}" aria-label="View {{ product.title }}">
+    <img src="{{ product.image }}" alt="{{ product.image_alt }}" loading="lazy" />
+  </a>
+  <div class="store-product-info"><span class="store-product-category">{{ product.category }} / {{ product.subcategory }}</span><h3><a href="{{ product.url }}">{{ product.title }}</a></h3><p>{{ product.summary }}</p><div class="store-product-footer"><strong>${{ product.price_display }} <small>USD</small></strong><a href="{{ product.url }}" aria-label="View details for {{ product.title }}">Details ↗</a></div></div>
+</article>
+{% endmacro %}

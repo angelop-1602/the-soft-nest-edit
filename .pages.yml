@@ -77,7 +77,7 @@ content:
         type: rich-text
         required: true
   - name: products
-    label: Affiliate Products
+    label: Journal Affiliate Products
     type: collection
     path: content/products
     format: yaml-frontmatter
@@ -136,6 +136,73 @@ content:
         label: Editor notes (optional)
         type: rich-text
         description: Not displayed on the public site, but stored in GitHub. Do not store confidential information.
+  - name: store_products
+    label: Dropshipping Store Products
+    type: collection
+    path: content/store-products
+    format: yaml-frontmatter
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields: [title, category, subcategory, price_usd, published]
+    fields:
+      - name: title
+        label: Product title
+        type: string
+        required: true
+      - name: category
+        label: Shop category
+        type: select
+        required: true
+        options:
+          values: [Wall Decor, Lighting & Lamps, Vases & Decorative Containers, Artificial Plants & Flowers, Mirrors, Candles & Fragrances, Decorative Accessories, Cushions & Pillows, Rugs & Carpets, Curtains & Window Decor, Table Decor, Storage & Organization, Clocks, Decorative Furniture, Seasonal & Holiday Decor, Religious & Spiritual Decor, Kitchen & Dining Decor, Bathroom Decor, Bedroom Decor, Outdoor & Garden Decor, Natural & Handmade Decor, Home Fragrance Accessories, Personalized Decor, Bookshelf & Office Decor]
+      - name: subcategory
+        label: Product type (exact wording from selected collection)
+        type: string
+        required: true
+        description: Use one of the subcategories shown on your Shop collection page.
+      - name: image
+        label: Product image you have permission to use
+        type: image
+        required: true
+      - name: image_alt
+        label: Image description
+        type: string
+        required: true
+      - name: summary
+        label: Product description
+        type: text
+        required: true
+      - name: price_usd
+        label: Sale price in USD (without currency symbol)
+        type: number
+        required: true
+      - name: checkout_url
+        label: Tested hosted payment link (https)
+        type: string
+        required: true
+        description: Use YOUR verified per-product PayPal or approved gateway checkout link. Not a CJ supplier or Amazon link.
+      - name: shipping_details
+        label: Verified US shipping information
+        type: text
+        required: true
+      - name: return_details
+        label: Your customer return and refund conditions
+        type: text
+        required: true
+      - name: sku
+        label: Internal CJ SKU / sourcing reference (optional)
+        type: string
+      - name: featured
+        label: Feature product first
+        type: boolean
+      - name: published
+        label: Publish as purchasable product
+        type: boolean
+        description: Enable ONLY after checkout, USD amount, warehouse, stock, shipping, returns and fulfillment have been tested.
+      - name: body
+        label: Private editorial notes (no secrets)
+        type: rich-text
   - name: settings
     label: Site settings
     type: file

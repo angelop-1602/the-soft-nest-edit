@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% from 'store_card.html' import store_card %}
+{% block content %}
+<nav class="shell store-crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/shop/">Shop</a><span>/</span><span aria-current="page">{{ store_category.name }}</span></nav>
+<section class="shell store-collection-header">
+  <span class="micro-title">THE SOFT NEST EDIT / COLLECTION</span>
+  <h1>{{ store_category.name }}</h1>
+  <p>{{ store_category.description }}</p>
+  <a href="/shop/#all-collections" class="read-link">Browse all collections <span aria-hidden="true">↗</span></a>
+</section>
+<section class="shell store-category-body">
+  <div class="store-subcategories"><h2>Explore by product type</h2><div class="store-chip-list" aria-label="Subcategories">
+    <button class="store-chip active" type="button" data-store-filter="all" aria-pressed="true">All {{ store_category.name }}</button>
+    {% for type in store_category.subcategories %}<button class="store-chip" type="button" data-store-filter="{{ type|lower }}" aria-pressed="false">{{ type }}</button>{% endfor %}
+  </div></div>
+  {% if store_category_products %}
+  <div class="store-collection-products"><div class="store-results-head"><h2>Shop {{ store_category.name }}</h2><span id="store-filter-count" aria-live="polite">{{ store_category_products|length }} products</span></div><div class="store-product-grid" id="filtered-products">{% for product in store_category_products %}{{ store_card(product) }}{% endfor %}</div><p class="store-empty-search" id="store-filter-empty" hidden>There are no products in that subcategory yet. Choose another product type.</p></div>
+  {% else %}
+  <div class="store-coming-soon"><span aria-hidden="true">✳</span><h2>We're curating this collection.</h2><p>We're researching products and checking shipping and checkout details before accepting purchases. Explore the categories above or find styling ideas in the Journal.</p><a class="btn btn-dark" href="/journal/">Read styling ideas <span aria-hidden="true">↗</span></a></div>
+  {% endif %}
+</section>
+{% endblock %}

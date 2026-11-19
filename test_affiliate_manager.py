@@ -92,13 +92,14 @@ Internal integration test product.
         shop = read_page(root, 'shop')
         article = read_page(root, 'journal/cozy-living-room-ideas-on-a-budget')
         home = read_page(root, '')
-        for page in [shop, article, home]:
+        for page in [article]:
             assert page.cards == 1, f'Expected one product card, got {page.cards}'
             assert 'Test Woven Lamp' in page.get_text()
             assert 'Affiliate disclosure' in page.get_text()
             cta = page.ctas[0]
             assert cta.get('href') == 'https://example.org/products/test-lamp?ref=sample'
             assert {'sponsored', 'nofollow', 'noopener', 'noreferrer'}.issubset(set(cta['rel'].split()))
+        assert shop.cards == 0 and home.cards == 0, 'Affiliate products must stay out of the dropshipping store and homepage'
         assert 'Example Ceramic Vase' not in shop.get_text(), 'Unpublished example draft leaked'
 
         # Draft product does not render anywhere after changing the published flag.

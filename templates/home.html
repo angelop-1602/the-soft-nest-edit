@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% from 'macros.html' import card %}
-{% from 'product_card.html' import product_card %}
+{% from 'store_card.html' import store_card %}
 {% block content %}
 <section class="hero">
   <div class="hero-copy">
     <div class="hero-copy-inner">
-      <div class="eyebrow"><span class="tiny-line"></span> THE ART OF SLOW LIVING <span class="tiny-line"></span></div>
-      <h1>Make space<br/>for the things<br/><em>that matter.</em></h1>
-      <p>Beautifully simple home decor ideas, effortless styling tips and little moments of inspiration for the place you love most.</p>
-      <a class="btn btn-dark" href="/journal/">Explore the journal <span>↗</span></a>
+      <div class="eyebrow"><span class="tiny-line"></span> THOUGHTFULLY CURATED HOME DECOR <span class="tiny-line"></span></div>
+      <h1>Make room<br/>for a home<br/><em>you love.</em></h1>
+      <p>Explore home decor for every room: statement lighting, furniture, art, mirrors, soft furnishings and more—plus thoughtful styling advice in our Journal.</p>
+      <div class="home-shop-actions"><a class="btn btn-dark" href="/shop/">Shop home decor <span>↗</span></a><a class="read-link" href="/journal/">Read the Journal <span aria-hidden="true">↗</span></a></div>
       <div class="hero-bottom"><span class="asterisk">✳</span> GOOD DESIGN. REAL LIVING.</div>
     </div>
   </div>
@@ -24,10 +24,14 @@
 </section>
 <section class="categories-section section-pad">
   <div class="shell">
-    <div class="section-heading"><div><p class="micro-title">FIND YOUR INSPIRATION</p><h2>Explore by <em>space.</em></h2></div><a class="read-link" href="/journal/">Browse all stories <span aria-hidden="true">↗</span></a></div>
+    <div class="section-heading"><div><p class="micro-title">SHOP THE COLLECTIONS</p><h2>Every corner, <em>considered.</em></h2></div><a class="read-link" href="/shop/#all-collections">See all 24 categories <span aria-hidden="true">↗</span></a></div>
     <div class="category-grid">
-      {% for category, slug in categories[:3] %}
-      <a class="category-card" href="/category/{{ slug }}/"><div class="category-image"><img loading="lazy" src="{{ category_images[category] }}" alt="{{ category }} decor inspiration" /></div><div class="category-info"><span class="category-count">0{{ loop.index }} / EXPLORE</span><h3>{{ category }}</h3><span aria-hidden="true">↗</span></div></a>
+      {% for collection in store_categories[:6] %}
+      <a class="category-card" href="/shop/category/{{ collection.slug }}/">
+        <div class="category-image{% if not collection.image %} category-image--editorial{% endif %}">
+          {% if collection.image %}<img loading="lazy" src="{{ collection.image }}" alt="Home decor inspiration for {{ collection.name }}" />{% else %}<span class="category-placeholder" aria-hidden="true">✳</span>{% endif %}
+        </div><div class="category-info"><span class="category-count">{{ '%02d'|format(loop.index) }} / SHOP COLLECTION</span><h3>{{ collection.name }}</h3><span aria-hidden="true">↗</span></div>
+      </a>
       {% endfor %}
     </div>
   </div>
@@ -38,9 +42,9 @@
 </section>
 <section class="quote-banner"><div class="shell"><span class="quote-asterisk">✳</span><p>“A home should feel like <em>your favourite place to be.</em>”</p><span class="quote-credit">THE SOFT NEST PHILOSOPHY</span></div></section>
 <section class="shop-section section-pad shell">
-  <div class="section-heading"><div><p class="micro-title">CONSIDERED FINDS, INTENTIONALLY CHOSEN</p><h2>Little things, <em>lovely impact.</em></h2></div><a class="read-link" href="/shop/">Explore the edit <span aria-hidden="true">↗</span></a></div>
-  <div class="shop-layout"><div class="shop-image"><img loading="lazy" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=82" alt="Thoughtfully styled neutral home with warm accents" /></div><div class="shop-copy"><span class="shop-index">THE DECOR EDIT / 001</span><h3>The little details that make a room <em>feel like yours.</em></h3><p>From the right kind of lighting to textures that invite you to stay, explore practical advice for choosing beautiful, hardworking pieces.</p><div class="shop-topic"><span>01</span><a href="/journal/cozy-living-room-ideas-on-a-budget/">Lighting & atmosphere <b>↗</b></a></div><div class="shop-topic"><span>02</span><a href="/journal/cozy-bedroom-on-a-budget/">Soft textures & textiles <b>↗</b></a></div><div class="shop-topic"><span>03</span><a href="/journal/small-apartment-decor-ideas/">Storage with style <b>↗</b></a></div></div></div>
+  <div class="section-heading"><div><p class="micro-title">FOR EVERY KIND OF HOME</p><h2>So much more <em>to discover.</em></h2></div><a class="read-link" href="/shop/">Shop all collections <span aria-hidden="true">↗</span></a></div>
+  <div class="shop-layout"><div class="shop-image"><img loading="lazy" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=82" alt="Warm contemporary interior with considered furniture and accents" /></div><div class="shop-copy"><span class="shop-index">THE HOME EDIT / 001</span><h3>From furniture to finishing touches, <em>make it yours.</em></h3><p>Explore more than small accessories. Discover collection pages for statement lighting, wall art, mirrors, decorative furniture, textiles and plenty more.</p><div class="shop-topic"><span>01</span><a href="/shop/category/decorative-furniture/">Accent furniture <b>↗</b></a></div><div class="shop-topic"><span>02</span><a href="/shop/category/lighting-lamps/">Lighting and lamps <b>↗</b></a></div><div class="shop-topic"><span>03</span><a href="/shop/category/rugs-carpets/">Rugs and textiles <b>↗</b></a></div></div></div>
 </section>
-{% if featured_products %}<section class="shell section-pad homepage-products"><div class="section-heading"><div><span class="micro-title">A FEW BEAUTIFUL FINDS</span><h2>Shop the <em>little details.</em></h2></div><a class="read-link" href="/shop/">Shop the edit ↗</a></div>{% if featured_products | selectattr('affiliate') | list %}<p class="affiliate-product-disclosure"><strong>Affiliate disclosure:</strong> Some links below are affiliate links. We may earn a commission at no extra cost to you. <a href="/affiliate-disclosure/">Learn more.</a></p>{% endif %}<div class="affiliate-product-grid">{% for product in featured_products[:3] %}{{ product_card(product) }}{% endfor %}</div></section>{% endif %}
+{% if featured_store_products %}<section class="shell section-pad homepage-products"><div class="section-heading"><div><span class="micro-title">FROM THE SHOP</span><h2>Our latest <em>finds.</em></h2></div><a class="read-link" href="/shop/">Shop the collections ↗</a></div><div class="store-product-grid">{% for product in featured_store_products[:4] %}{{ store_card(product) }}{% endfor %}</div></section>{% endif %}
 <section class="closing-banner"><div class="closing-image"><img loading="lazy" src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=82" alt="Sunlit neutral interior" /></div><div class="closing-content"><span class="micro-title">A SPACE TO COME HOME TO</span><h2>Good living begins<br/><em>at home.</em></h2><p>More comfort, less clutter. More meaning, fewer things. Find your own way to make a space feel just right.</p><a href="/journal/" class="btn btn-cream">Find your inspiration <span>↗</span></a></div></section>
 {% endblock %}
