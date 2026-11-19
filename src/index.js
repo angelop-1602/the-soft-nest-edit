@@ -1,4 +1,5 @@
 import { handleCartPreview } from './cart-preview.js';
+import { handleCheckoutReadiness } from './cart-readiness.js';
 import { catalogStatus, syncCjCatalog } from './cj-sync.js';
 import { handleSandboxPaypal } from './paypal-sandbox.js';
 import { getCatalogPreview, parsePreviewPage } from './catalog-preview.js';
@@ -43,6 +44,10 @@ export default {
           status: 503, headers: { 'Cache-Control': 'no-store' }
         });
       }
+    }
+    // Server-owned verification check. Never triggers payment or fulfillment.
+    if (url.pathname === '/api/checkout/readiness') {
+      return handleCheckoutReadiness(request, env);
     }
     // Public, read-only CJ planning-cart API. No prices or purchase actions.
     if (url.pathname === '/api/catalog/variants') {

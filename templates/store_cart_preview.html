@@ -12,5 +12,11 @@
     <button type="button" class="cj-cart-clear" id="cj-cart-clear">Clear selections</button>
   </div>
   <div class="cj-cart-checkout" role="status"><strong>Checkout is not enabled</strong><p>No payment is taken and nothing is sent to CJ. We're preparing verified pricing, shipping and secure order creation before opening sales.</p></div>
+  <section class="cj-readiness-panel" aria-labelledby="cj-readiness-title">
+    <p class="micro-title">CHECKOUT PREPARATION</p>
+    <h2 id="cj-readiness-title">Availability and pricing checks</h2>
+    <div id="cj-readiness-output" role="status" aria-live="polite">Checking checkout requirements…</div>
+    <p>These checks do not create customer orders. No payment or CJ supplier purchase can be made here.</p>
+  </section>
 </section>
 {% endblock %}

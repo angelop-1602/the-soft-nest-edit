@@ -23,7 +23,7 @@
     } catch { return []; }
   }
   function writeCart(items) {
-    try { localStorage.setItem(KEY, JSON.stringify(items)); return true; }
+    try { localStorage.setItem(KEY, JSON.stringify(items)); window.dispatchEvent(new Event('softnest:cart-change')); return true; }
     catch { return false; }
   }
   function el(name, klass, label) {
