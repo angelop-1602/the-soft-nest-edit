@@ -1,6 +1,7 @@
 # The Soft Nest Edit — browsable collections. Not supplier inventory.
 - name: Wall Decor
   slug: wall-decor
+  icon: image
   description: Wall art, sculptural statements and finishing touches.
   subcategories:
   - Wall Art
@@ -13,6 +14,7 @@
   image: https://images.unsplash.com/photo-1722942631531-5b09fed44978?auto=format&fit=crop&w=960&q=75
 - name: Lighting & Lamps
   slug: lighting-lamps
+  icon: lamp-floor
   description: Lighting that sets the mood in every room.
   subcategories:
   - Table Lamps
@@ -25,6 +27,7 @@
   image: https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=960&q=75
 - name: Vases & Decorative Containers
   slug: vases-decorative-containers
+  icon: amphora
   description: Beautiful vessels for shelves, consoles and tables.
   subcategories:
   - Ceramic Vases
@@ -35,6 +38,7 @@
   image: https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=960&q=75
 - name: Artificial Plants & Flowers
   slug: artificial-plants-flowers
+  icon: sprout
   description: Evergreen style with low upkeep.
   subcategories:
   - Artificial Flowers
@@ -45,6 +49,7 @@
   image: https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=960&q=75
 - name: Mirrors
   slug: mirrors
+  icon: rectangle-vertical
   description: Light-catching accents from entryways to bedrooms.
   subcategories:
   - Wall Mirrors
@@ -55,6 +60,7 @@
   image: https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=960&q=75
 - name: Candles & Fragrances
   slug: candles-fragrances
+  icon: flame
   description: Warm atmosphere and scent-led rituals.
   subcategories:
   - Scented Candles
@@ -65,6 +71,7 @@
   image: https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=960&q=75
 - name: Decorative Accessories
   slug: decorative-accessories
+  icon: gem
   description: Personality in the details.
   subcategories:
   - Figurines
@@ -75,6 +82,7 @@
   - Bookends
 - name: Cushions & Pillows
   slug: cushions-pillows
+  icon: square
   description: Comfortable layers and expressive textures.
   subcategories:
   - Throw Pillows
@@ -83,6 +91,7 @@
   - Bolsters
 - name: Rugs & Carpets
   slug: rugs-carpets
+  icon: square-dashed
   description: Ground your space with color and texture.
   subcategories:
   - Area Rugs
@@ -92,6 +101,7 @@
   - Decorative Carpets
 - name: Curtains & Window Decor
   slug: curtains-window-decor
+  icon: blinds
   description: Softness, shade and thoughtful window dressing.
   subcategories:
   - Curtains
@@ -101,6 +111,7 @@
   - Curtain Tiebacks
 - name: Table Decor
   slug: table-decor
+  icon: utensils
   description: Pieces for everyday tables and gatherings.
   subcategories:
   - Centerpieces
@@ -110,6 +121,7 @@
   - Decorative Trays
 - name: Storage & Organization
   slug: storage-organization
+  icon: archive
   description: Practical pieces worth leaving on display.
   subcategories:
   - Decorative Baskets
@@ -119,6 +131,7 @@
   - Decorative Hooks
 - name: Clocks
   slug: clocks
+  icon: clock
   description: Practical timepieces with decorative appeal.
   subcategories:
   - Wall Clocks
@@ -127,6 +140,7 @@
   - Vintage Clocks
 - name: Decorative Furniture
   slug: decorative-furniture
+  icon: armchair
   description: Statement furniture for gathering, lounging and living.
   subcategories:
   - Accent Tables
@@ -136,6 +150,7 @@
   - Accent Chairs
 - name: Seasonal & Holiday Decor
   slug: seasonal-holiday-decor
+  icon: gift
   description: Thoughtful accents for celebrations throughout the year.
   subcategories:
   - Christmas Decorations
@@ -144,6 +159,7 @@
   - Party Decorations
 - name: Religious & Spiritual Decor
   slug: religious-spiritual-decor
+  icon: church
   description: Meaningful pieces for reflection and personal spaces.
   subcategories:
   - Religious Statues
@@ -152,6 +168,7 @@
   - Prayer Displays
 - name: Kitchen & Dining Decor
   slug: kitchen-dining-decor
+  icon: cooking-pot
   description: Useful and beautiful finishing touches.
   subcategories:
   - Decorative Plates
@@ -161,6 +178,7 @@
   - Napkin Holders
 - name: Bathroom Decor
   slug: bathroom-decor
+  icon: bath
   description: Small upgrades for a restful routine.
   subcategories:
   - Soap Dispensers
@@ -169,6 +187,7 @@
   - Bathroom Mats
 - name: Bedroom Decor
   slug: bedroom-decor
+  icon: bed-double
   description: Create a personal retreat with layered finishes.
   subcategories:
   - Bedside Accessories
@@ -177,6 +196,7 @@
   - Bedroom Wall Art
 - name: Outdoor & Garden Decor
   slug: outdoor-garden-decor
+  icon: flower-2
   description: Make outdoor corners feel like home.
   subcategories:
   - Garden Statues
@@ -186,6 +206,7 @@
   - Decorative Pots
 - name: Natural & Handmade Decor
   slug: natural-handmade-decor
+  icon: leaf
   description: Organic materials and handcrafted character.
   subcategories:
   - Woven Baskets
@@ -195,6 +216,7 @@
   - Macramé
 - name: Home Fragrance Accessories
   slug: home-fragrance-accessories
+  icon: wind
   description: Accessories for atmosphere and everyday rituals.
   subcategories:
   - Potpourri
@@ -203,6 +225,7 @@
   - Fragrance Holders
 - name: Personalized Decor
   slug: personalized-decor
+  icon: signature
   description: Personal touches and customized gifts.
   subcategories:
   - Custom Name Signs
@@ -211,6 +234,7 @@
   - Engraved Decorations
 - name: Bookshelf & Office Decor
   slug: bookshelf-office-decor
+  icon: book-open
   description: Refined details for shelves and workspaces.
   subcategories:
   - Desk Ornaments

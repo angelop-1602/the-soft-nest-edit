@@ -1,5 +1,5 @@
 {% macro store_card(product) %}
-<article class="store-product-card" data-subcategory="{{ product.subcategory|lower }}" data-product-search="{{ (product.title ~ ' ' ~ product.category ~ ' ' ~ product.subcategory ~ ' ' ~ product.summary)|lower }}" data-title="{{ product.title|lower }}" data-price="{{ product.price_display }}">
+<article class="store-product-card" data-collection="{{ product.category_slug }}" data-available="{{ 'true' if product.is_purchasable else 'false' }}" data-subcategory="{{ product.subcategory|lower }}" data-product-search="{{ (product.title ~ ' ' ~ product.category ~ ' ' ~ product.subcategory ~ ' ' ~ product.summary)|lower }}" data-title="{{ product.title|lower }}" data-price="{{ product.price_display }}">
   <a class="store-product-image" href="{{ product.url }}" aria-label="View {{ product.title }}">
     <img src="{{ product.image }}" alt="{{ product.image_alt }}" loading="lazy" />
     {% if not product.is_purchasable %}<span class="store-preview-tag">Preview</span>{% endif %}

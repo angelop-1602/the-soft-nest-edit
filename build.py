@@ -314,7 +314,8 @@ for post in posts:
 render('shop', 'shop.html',
        title='Shop Home Decor by Category | The Soft Nest Edit',
        description='Browse curated home decor, from furniture and lighting to wall art, mirrors, rugs and outdoor accents. Explore 24 collections.',
-       page='shop')
+       page='shop', shop_collections=sorted(STORE_CATEGORIES,
+           key=lambda c: not any(p['category_slug'] == c['slug'] for p in store_products)))
 render('shop/catalog-preview', 'store_cj_preview.html',
        title='CJ Catalog Staging Preview | The Soft Nest Edit',
        description='Unpriced supplier record preview before product approval.',

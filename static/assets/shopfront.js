@@ -80,23 +80,6 @@
     if (event.key === SAVE_KEY) { refreshSavedPage(); refreshSaveControls(); }
   });
 
-  const search = document.getElementById('decor-search');
-  if (search) {
-    const tiles = Array.from(document.querySelectorAll('[data-decor-search]'));
-    const count = document.getElementById('decor-count');
-    const empty = document.getElementById('decor-empty');
-    const filter = () => {
-      const query = search.value.trim().toLocaleLowerCase(); let visible = 0;
-      for (const tile of tiles) {
-        const matches = !query || (tile.dataset.decorSearch || '').includes(query);
-        tile.hidden = !matches; if (matches) visible += 1;
-      }
-      if (count) count.textContent = visible + (visible === 1 ? ' collection' : ' collections');
-      if (empty) empty.hidden = visible !== 0;
-    };
-    search.addEventListener('input', filter);
-  }
-
   const container = document.getElementById('filtered-products');
   if (container) {
     const cards = Array.from(container.querySelectorAll('.store-product-card'));
@@ -105,7 +88,36 @@
     const counter = document.getElementById('store-filter-count');
     const empty = document.getElementById('store-filter-empty');
     const chips = Array.from(document.querySelectorAll('[data-store-filter]'));
+    const collections = Array.from(document.querySelectorAll('[data-collection-filter]'));
+    const expand = document.getElementById('collection-expand');
+    const available = document.getElementById('store-available-only');
+    const activeFilters = document.getElementById('store-active-filters');
+    const activeLabel = document.getElementById('store-active-label');
+    const reset = document.getElementById('store-filter-reset');
+    const heading = document.getElementById('store-products-title');
+    const emptyTitle = document.getElementById('store-empty-title');
+    const emptyMessage = document.getElementById('store-empty-message');
+    const defaultHeading = heading ? heading.innerHTML : '';
+    const defaultEmptyTitle = emptyTitle ? emptyTitle.textContent : '';
+    const defaultEmptyMessage = emptyMessage ? emptyMessage.textContent : '';
+    let collection = 'all';
     let subcategory = 'all';
+    let expanded = false;
+
+    const refreshCollections = () => {
+      collections.forEach(button => {
+        const selected = button.dataset.collectionFilter === collection;
+        button.classList.toggle('active', selected);
+        button.setAttribute('aria-pressed', String(selected));
+        // Keep the selected collection visible when the rest are collapsed.
+        button.hidden = !expanded && button.hasAttribute('data-more-collection') && !selected;
+      });
+      if (expand) {
+        expand.hidden = false;
+        expand.setAttribute('aria-expanded', String(expanded));
+        expand.firstChild.textContent = expanded ? 'Show fewer collections ' : `View all ${collections.length - 1} collections `;
+      }
+    };
     const sortCards = () => {
       const mode = sort ? sort.value : 'featured';
       const price = card => card.dataset.price ? Number(card.dataset.price) : null;
@@ -126,12 +138,42 @@
       const term = input ? input.value.trim().toLocaleLowerCase() : '';
       let visible = 0;
       for (const card of cards) {
-        const matches = (subcategory === 'all' || card.dataset.subcategory === subcategory)
-          && (!term || (card.dataset.productSearch || '').includes(term));
+        const matches = (collection === 'all' || card.dataset.collection === collection)
+          && (subcategory === 'all' || card.dataset.subcategory === subcategory)
+          && (!term || (card.dataset.productSearch || '').includes(term))
+          && (!available || !available.checked || card.dataset.available === 'true');
         card.hidden = !matches; if (matches) visible += 1;
       }
-      if (counter) counter.textContent = visible + (visible === 1 ? ' product' : ' products');
+      const selected = collections.find(button => button.dataset.collectionFilter === collection);
+      const name = selected ? selected.dataset.collectionName : '';
+      const descriptions = [];
+      if (collection !== 'all') descriptions.push(name);
+      if (term) descriptions.push(`Search: ${input.value.trim()}`);
+      if (available && available.checked) descriptions.push('Available to order');
+      if (counter) counter.textContent = visible + (visible === 1 ? ' product' : ' products')
+        + (descriptions.length ? ' · ' + descriptions.join(' · ') : '');
+      if (activeFilters) activeFilters.hidden = descriptions.length === 0;
+      if (activeLabel) activeLabel.textContent = descriptions.join(' · ');
+      if (heading) {
+        if (collection === 'all') heading.innerHTML = defaultHeading;
+        else heading.textContent = name;
+      }
       if (empty) empty.hidden = visible !== 0;
+      if (emptyTitle && emptyMessage) {
+        if (term) {
+          emptyTitle.textContent = 'No pieces found this time.';
+          emptyMessage.textContent = 'Try a different search or clear your filters to explore more pieces.';
+        } else if (available && available.checked) {
+          emptyTitle.textContent = 'Nothing ready to order just yet.';
+          emptyMessage.textContent = 'Clear the availability filter to explore previews. Each product will show when it is ready to order.';
+        } else if (collection !== 'all') {
+          emptyTitle.textContent = 'A little more to come.';
+          emptyMessage.textContent = `We are still curating ${name.toLowerCase()}. Choose another collection or clear your filters to see all pieces.`;
+        } else {
+          emptyTitle.textContent = defaultEmptyTitle;
+          emptyMessage.textContent = defaultEmptyMessage;
+        }
+      }
     };
     chips.forEach(button => button.addEventListener('click', () => {
       subcategory = button.dataset.storeFilter;
@@ -141,9 +183,24 @@
       });
       filterCards();
     }));
+    collections.forEach(button => button.addEventListener('click', () => {
+      collection = button.dataset.collectionFilter;
+      refreshCollections(); filterCards();
+    }));
+    if (expand) expand.addEventListener('click', () => {
+      expanded = !expanded;
+      refreshCollections();
+    });
+    if (available) available.addEventListener('change', filterCards);
+    if (reset) reset.addEventListener('click', () => {
+      collection = 'all'; subcategory = 'all';
+      if (input) input.value = '';
+      if (available) available.checked = false;
+      refreshCollections(); filterCards();
+    });
     if (input) input.addEventListener('input', filterCards);
     if (sort) sort.addEventListener('change', sortCards);
-    sortCards(); filterCards();
+    refreshCollections(); sortCards(); filterCards();
   }
   refreshSavedPage(); refreshSaveControls();
 })();

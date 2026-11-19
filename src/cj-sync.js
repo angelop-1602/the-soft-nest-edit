@@ -18,32 +18,91 @@ function safeCode(value) {
   return /^[A-Za-z0-9_-]{1,30}$/.test(code) ? code : 'unknown';
 }
 
+// SOFTNEST_CJ_RATE_LIMIT_V1
+// CJ Free accounts may allow only one API request per second. Keep the importer
+// deliberately conservative. This queue serializes calls within one Worker isolate;
+// the existing D1 sync lock prevents overlapping import runs.
+const CJ_MIN_INTERVAL_MS = 1350;
+let cjNextRequestAt = 0;
+let cjQueue = Promise.resolve();
+const delayCJ = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+async function waitForCJSlot() {
+  const previous = cjQueue;
+  let release;
+  cjQueue = new Promise(resolve => { release = resolve; });
+  await previous;
+  try {
+    const now = Date.now();
+    const start = Math.max(now, cjNextRequestAt);
+    cjNextRequestAt = start + CJ_MIN_INTERVAL_MS;
+    const wait = start - now;
+    if (wait > 0) await delayCJ(wait);
+  } finally { release(); }
+}
+
+// HTTP 429 means EITHER too many calls or no remaining API points.
+// We never log/return full CJ responses, API keys, tokens, or private usage data.
+export function classifyCjRateLimit(status, payload) {
+  const code = Number(payload?.code);
+  const message = typeof payload?.message === 'string' ? payload.message : '';
+  const knownRateCodes = [402, 406, 429, 1600200, 1600201, 16900500];
+  if (status !== 429 && !knownRateCodes.includes(code)) return null;
+  if (code === 1600201 || code === 16900500 ||
+    payload?.pointsInfo?.remaining === 0 ||
+    /insufficient.{0,25}(?:api )?points|(?:api )?points.{0,20}exhausted|quota.{0,20}(?:used up|exceeded)/i.test(message)) {
+    return 'CJ_POINTS_EXHAUSTED';
+  }
+  return 'CJ_RATE_LIMITED';
+}
+
 async function cjFetch(path, { method = 'GET', token = '', body = undefined, search = {} } = {}) {
   const url = new URL(BASE + path);
   for (const [key, value] of Object.entries(search)) url.searchParams.set(key, String(value));
-  let response;
-  try {
-    response = await fetch(url.toString(), {
-      method,
-      headers: {
-        'Accept': 'application/json',
-        ...(token ? { 'CJ-Access-Token': token } : {}),
-        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {})
-      },
-      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
-      signal: AbortSignal.timeout(15000)
-    });
-  } catch {
-    throw new SyncError('CJ_NETWORK_ERROR');
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await waitForCJSlot();
+    let response;
+    try {
+      response = await fetch(url.toString(), {
+        method,
+        headers: {
+          'Accept': 'application/json',
+          ...(token ? { 'CJ-Access-Token': token } : {}),
+          ...(body !== undefined ? { 'Content-Type': 'application/json' } : {})
+        },
+        ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+        signal: AbortSignal.timeout(15000)
+      });
+    } catch { throw new SyncError('CJ_NETWORK_ERROR'); }
+    let payload;
+    try { payload = await response.json(); }
+    catch {
+      if (response.status !== 429 && !response.ok) {
+        throw new SyncError(`CJ_HTTP_${response.status}`);
+      }
+      if (response.status !== 429) throw new SyncError('CJ_INVALID_JSON');
+      payload = null; // An HTTP 429 can have an empty or non-JSON body.
+    }
+    const rateCode = classifyCjRateLimit(response.status, payload);
+    if (rateCode === 'CJ_POINTS_EXHAUSTED') {
+      // Waiting a few seconds cannot replenish the account's daily points.
+      throw new SyncError(rateCode);
+    }
+    if (rateCode === 'CJ_RATE_LIMITED') {
+      if (attempt === 2) throw new SyncError(rateCode);
+      const retryAfterSeconds = Number(response.headers.get('Retry-After'));
+      const retryAfterMs = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+        ? Math.min(15000, retryAfterSeconds * 1000) : 0;
+      await delayCJ(Math.max(2500 * (attempt + 1), retryAfterMs));
+      continue;
+    }
+    if (!response.ok) throw new SyncError(`CJ_HTTP_${response.status}`);
+    if (!payload || payload.result !== true || payload.code !== 200) {
+      throw new SyncError(`CJ_CODE_${safeCode(payload?.code)}`);
+    }
+    return payload.data;
   }
-  if (!response.ok) throw new SyncError(`CJ_HTTP_${response.status}`);
-  let payload;
-  try { payload = await response.json(); }
-  catch { throw new SyncError('CJ_INVALID_JSON'); }
-  if (!payload || payload.result !== true || payload.code !== 200) {
-    throw new SyncError(`CJ_CODE_${safeCode(payload?.code)}`);
-  }
-  return payload.data;
+  throw new SyncError('CJ_RATE_LIMITED');
 }
 
 function parsedExpiry(value, fallbackMs) {

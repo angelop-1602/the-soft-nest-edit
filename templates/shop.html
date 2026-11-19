@@ -1,41 +1,63 @@
 {% extends 'base.html' %}
 {% from 'store_card.html' import store_card %}
 {% block content %}
-<section class="store-hero">
+<section class="store-hero store-hero--browse">
   <div class="shell store-hero-layout">
     <div class="store-hero-copy">
-      <span class="micro-title">THE SOFT NEST EDIT / HOME DECOR SHOP</span>
-      <h1>Find what makes a house <em>feel like home.</em></h1>
-      <p>Explore considered decor for every corner, from statement lighting and furniture to art, textiles, storage and outdoor accents.</p>
-      <a class="btn btn-dark" href="#all-collections">Explore 24 collections <span aria-hidden="true">↗</span></a>
+      <span class="micro-title">THE SOFT NEST EDIT / THE SHOP</span>
+      <h1>A little detail.<br>A little more <em>home.</em></h1>
+      <p>Thoughtful pieces for the spaces you love. Find your finishing touch, one collection at a time.</p>
+      <a class="btn btn-dark" href="#all-collections">Find your next favorite <span aria-hidden="true">&#8599;</span></a>
     </div>
-    <div class="store-hero-photo"><img src="https://images.unsplash.com/photo-1722942631531-5b09fed44978?auto=format&fit=crop&w=1400&q=80" alt="Warm neutral living room with layered home furnishings" fetchpriority="high"><span class="store-photo-caption">SPACES TO LOVE · DETAILS TO KEEP</span></div>
+    <div class="store-hero-photo"><img src="https://images.unsplash.com/photo-1722942631531-5b09fed44978?auto=format&fit=crop&w=1400&q=80" alt="Warm neutral living room with layered home furnishings" fetchpriority="high"><span class="store-photo-caption">CONSIDERED PIECES. EVERYDAY BEAUTY.</span></div>
   </div>
 </section>
-<section class="shell shop-introduction" aria-label="Explore the shop">
-  <div><strong>24 decor collections</strong><span>Everything from wall decor to accent furniture</span></div>
-  <div><strong>Made for real homes</strong><span>Explore by category and product type</span></div>
-  <div><strong>Inspiration included</strong><span>Styling ideas in our Journal</span></div>
-</section>
-<section class="shell store-catalog" id="all-collections" aria-labelledby="collection-title">
-  <div class="section-heading"><div><p class="micro-title">SHOP BY CATEGORY</p><h2 id="collection-title">A home, <em>your way.</em></h2></div><p class="store-intro-note">Discover all 24 collections. Individual products will appear as they are reviewed and added.</p></div>
-  <div class="store-tools"><label class="store-search" for="decor-search"><span aria-hidden="true">⌕</span><input type="search" id="decor-search" placeholder="Search decor or product types…" autocomplete="off" aria-controls="collection-list"><span class="sr-only">Search collections</span></label><span id="decor-count" aria-live="polite">{{ store_categories|length }} collections</span></div>
-  <div class="collection-list" id="collection-list">
-    {% for collection in store_categories %}
-    <a class="collection-tile" href="/shop/category/{{ collection.slug }}/" data-decor-search="{{ (collection.name ~ ' ' ~ collection.subcategories|join(' '))|lower }}" aria-label="Explore {{ collection.name }} collection">
-      <span class="collection-number">{{ '%02d'|format(loop.index) }} / COLLECTION</span>
-      <span class="collection-name">{{ collection.name }}</span>
-      <span class="collection-types">{{ collection.subcategories[:4]|join(' · ') }}{% if collection.subcategories|length > 4 %} · +{{ collection.subcategories|length - 4 }} more{% endif %}</span>
-      <span class="collection-arrow" aria-hidden="true">↗</span>
-    </a>
+
+<section class="shell store-browse" id="all-collections" aria-labelledby="collection-title">
+  <div class="store-browse-heading">
+    <div><p class="micro-title">A PLACE FOR EVERY LITTLE THING</p><h2 id="collection-title">What feels like <em>you?</em></h2></div>
+    <p>Pick a collection. Find a piece to love.</p>
+  </div>
+  <div class="collection-filters" id="collection-list" role="group" aria-label="Filter products by collection">
+    <button class="collection-filter active" type="button" data-collection-filter="all" data-collection-name="All pieces" aria-pressed="true" aria-controls="filtered-products">
+      <span class="collection-icon" style="--collection-icon: url('/assets/icons/lucide/grid-2x2.svg')" aria-hidden="true"></span>
+      <span class="collection-filter-name">All pieces</span>
+      <span class="collection-filter-count">{{ store_products|length }} {{ 'piece' if store_products|length == 1 else 'pieces' }}</span>
+    </button>
+    {% for collection in shop_collections %}
+    {% set count = store_products|selectattr('category_slug', 'equalto', collection.slug)|list|length %}
+    <button class="collection-filter" type="button" data-collection-filter="{{ collection.slug }}" data-collection-name="{{ collection.name }}"{% if loop.index > 7 %} data-more-collection{% endif %} aria-pressed="false" aria-controls="filtered-products">
+      <span class="collection-icon" style="--collection-icon: url('/assets/icons/lucide/{{ collection.icon }}.svg')" aria-hidden="true"></span>
+      <span class="collection-filter-name">{{ collection.name }}</span>
+      <span class="collection-filter-count">{{ count }} {{ 'piece' if count == 1 else 'pieces' }}</span>
+    </button>
     {% endfor %}
   </div>
-  <p id="decor-empty" class="store-empty-search" role="status" hidden>No collections match that search. Try “lamps”, “mirrors” or “furniture”.</p>
+  <button class="collection-expand" id="collection-expand" type="button" aria-expanded="false" aria-controls="collection-list" hidden>View all {{ store_categories|length }} collections <img src="/assets/icons/lucide/chevron-down.svg" alt="" width="15" height="15"></button>
+  <noscript><p class="store-browse-note">Explore collection pages: {% for collection in store_categories %}<a href="/shop/category/{{ collection.slug }}/">{{ collection.name }}</a>{% if not loop.last %} &middot; {% endif %}{% endfor %}. Enable JavaScript to filter products here.</p></noscript>
 </section>
-{% if store_products %}
-<section class="shell store-featured" aria-labelledby="store-products-title"><div class="section-heading"><div><p class="micro-title">READY TO EXPLORE</p><h2 id="store-products-title">Shop our <em>latest additions.</em></h2></div></div><div class="store-tools store-product-tools"><label class="store-search" for="store-product-search"><span aria-hidden="true">⌕</span><input id="store-product-search" type="search" placeholder="Find a product…" autocomplete="off" aria-label="Search products" /></label><label class="store-sort-label">Sort by <select id="store-product-sort" aria-label="Sort products"><option value="featured">Featured</option><option value="az">Name A–Z</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label><span id="store-filter-count" aria-live="polite"></span></div><div class="store-product-grid" id="filtered-products">{% for product in store_products %}{{ store_card(product) }}{% endfor %}</div><p class="store-empty-search" id="store-filter-empty" hidden>No items match. Try another search.</p></section>
-{% else %}
-<section class="shell shop-soft-launch"><span class="micro-title">THE COLLECTION IS GROWING</span><h2>Great rooms take <em>thoughtful choices.</em></h2><p>Our category directory is open. Product previews can appear before checkout is activated. Purchases open only after pricing, shipping, returns and checkout have been verified. Browse the Journal for inspiration in the meantime.</p><a href="/journal/" class="read-link">Read the Journal <span aria-hidden="true">↗</span></a></section>
-{% endif %}
-<section class="shell store-journal-cta"><div><p class="micro-title">FROM THE JOURNAL</p><h2>Not sure where to <em>start?</em></h2><p>Explore room-by-room inspiration and practical ways to bring your home together.</p><a class="btn btn-dark" href="/journal/">Explore decor ideas <span aria-hidden="true">↗</span></a></div><img loading="lazy" src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1100&q=78" alt="Restful neutral bedroom with soft furnishings"></section>
+
+<section class="shell store-featured store-browse-products" aria-labelledby="store-products-title">
+  <div class="store-products-heading">
+    <div><p class="micro-title">THE CONSIDERED COLLECTION</p><h2 id="store-products-title">Find your next <em>favorite.</em></h2></div>
+    <p id="store-filter-count" role="status">{{ store_products|length }} {{ 'product' if store_products|length == 1 else 'products' }}</p>
+  </div>
+  <div class="store-tools store-product-tools store-browse-tools">
+    <label class="store-search" for="store-product-search"><img src="/assets/icons/lucide/search.svg" alt="" width="19" height="19"><input id="store-product-search" type="search" placeholder="Find a product&#8230;" autocomplete="off" aria-label="Search products" aria-controls="filtered-products"></label>
+    <label class="store-availability"><input id="store-available-only" type="checkbox" aria-controls="filtered-products">Available to order</label>
+    <label class="store-sort-label" for="store-product-sort">Sort by <select id="store-product-sort"><option value="featured">Featured</option><option value="az">Name A&ndash;Z</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label>
+  </div>
+  <div class="store-active-filters" id="store-active-filters" hidden><span id="store-active-label"></span><button id="store-filter-reset" type="button">Clear filters</button></div>
+  {% if store_products and store_products|rejectattr('is_purchasable')|list %}<p class="store-browse-note">Some pieces are previews. Check each product for ordering availability.</p>{% endif %}
+  <div class="store-product-grid" id="filtered-products">{% for product in store_products %}{{ store_card(product) }}{% endfor %}</div>
+  <div class="store-browse-empty" id="store-filter-empty"{% if store_products %} hidden{% endif %}>
+    <img src="/assets/icons/lucide/amphora.svg" alt="" width="38" height="38">
+    <h3 id="store-empty-title">Good things are taking shape.</h3>
+    <p id="store-empty-message">Our first pieces are being thoughtfully selected. Explore the collections above, or find a little inspiration in the Journal while we get ready.</p>
+    <a class="read-link" href="/journal/">Find your inspiration <span aria-hidden="true">&#8599;</span></a>
+  </div>
+  <p class="sr-only" id="store-save-status" role="status"></p>
+</section>
+
+<section class="shell store-journal-cta"><div><p class="micro-title">A LITTLE INSPIRATION</p><h2>Make room for <em>your kind of home.</em></h2><p>Room-by-room ideas, thoughtful details, and simple ways to bring it all together.</p><a class="btn btn-dark" href="/journal/">From the Journal <span aria-hidden="true">&#8599;</span></a></div><img loading="lazy" src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1100&q=78" alt="Restful neutral bedroom with soft furnishings"></section>
 {% endblock %}

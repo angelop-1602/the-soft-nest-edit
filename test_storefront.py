@@ -35,11 +35,16 @@ def indexed_urls(folder):
 
 run_build(ROOT)
 shop = page(ROOT, 'shop')
-assert 'All categories' in shop
-assert shop.count('class="collection-tile"') == 24
-assert 'id="decor-search"' in shop
+assert '>All categories</a>' not in shop
+assert shop.count('data-collection-filter=') == len(CATALOG) + 1
+assert 'aria-label="Filter products by collection"' in shop
+assert 'id="store-available-only"' in shop
+assert 'id="store-product-search"' in shop
+assert 'Good things are taking shape.' in shop
+assert 'Most popular' not in shop, 'Sales popularity must not be invented'
 for c in CATALOG:
     assert (ROOT / 'dist' / 'shop' / 'category' / c['slug'] / 'index.html').exists()
+    assert (ROOT / 'static' / 'assets' / 'icons' / 'lucide' / (c['icon'] + '.svg')).is_file()
 
 with tempfile.TemporaryDirectory(prefix='softnest-store-test-') as tmp:
     temp = Path(tmp) / 'site'
@@ -67,6 +72,7 @@ Test-only unpublished in real repository.
     assert '$49.99' in lamp and 'www.paypal.com/checkoutnow' in lamp
     assert 'Floor Lamps' in category and 'Test Interior Floor Lamp' in category
     assert 'Test Interior Floor Lamp' in home
+    assert 'data-collection="lighting-lamps" data-available="true"' in page(temp, 'shop')
     assert any('/shop/product/test-lamp/' in u for u in indexed_urls(temp))
     assert any('/shop/category/lighting-lamps/' in u for u in indexed_urls(temp))
     assert not any('/shop/category/wall-decor/' in u for u in indexed_urls(temp))
