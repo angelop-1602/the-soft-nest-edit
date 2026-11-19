@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/styles.css" />
   <link rel="stylesheet" href="/assets/motion.css" />
+  <link rel="stylesheet" href="/assets/shopfront.css" />
   <meta property="og:type" content="{% if page=='article' %}article{% else %}website{% endif %}" />
   <meta property="og:title" content="{{ title }}" />
   <meta property="og:description" content="{{ description }}" />
@@ -26,14 +27,14 @@
   <meta name="twitter:image" content="{{ og_image }}" />
   {% endif %}
   <meta name="twitter:card" content="summary_large_image" />
-  {% if page in ('admin', '404') %}<meta name="robots" content="noindex,nofollow" />{% endif %}
+  {% if page in ('admin', '404') %}<meta name="robots" content="noindex,nofollow" />{% elif noindex|default(false) %}<meta name="robots" content="noindex,follow" />{% endif %}
   <link rel="alternate" type="application/rss+xml" title="The Soft Nest Edit Journal" href="/rss.xml" />
   {% if page == 'home' %}<script type="application/ld+json">{{ website_jsonld | tojson }}</script>{% endif %}
   {% block jsonld %}{% endblock %}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class="announcement">a little more lovely, every day <span aria-hidden="true">✳</span> <span class="announcement-extra">thoughtfully styled, simply lived</span></div>
+  <div class="announcement">Considered decor for every corner <span aria-hidden="true">✳</span> <span class="announcement-extra">thoughtfully styled, simply lived</span></div>
   <header class="site-header">
     <div class="header-inner shell">
       <a class="brand" href="/" aria-label="The Soft Nest Edit — home">
@@ -43,11 +44,12 @@
       <button class="mobile-toggle" type="button" aria-expanded="false" aria-label="Toggle menu" aria-controls="site-nav"><span></span><span></span><span></span></button>
       <nav id="site-nav" class="nav" aria-label="Primary navigation">
         <a {% if page=='home' %}class="active"{% endif %} href="/">Home</a>
+        <a {% if page=='shop' %}class="active"{% endif %} href="/shop/">Shop</a>
+        <a href="/shop/#all-collections">All categories</a>
         <a {% if page=='journal' or page=='article' %}class="active"{% endif %} href="/journal/">The Journal</a>
-        <a {% if page=='shop' %}class="active"{% endif %} href="/shop/">Shop the Edit</a>
         <a {% if page=='about' %}class="active"{% endif %} href="/about/">Our Story</a>
       </nav>
-      <div class="header-right"><span class="vertical-line"></span><a class="header-cta" href="/journal/">Get inspired <span aria-hidden="true">↗</span></a></div>
+      <div class="header-right"><span class="vertical-line"></span><a class="header-cta" href="/shop/">Shop decor <span aria-hidden="true">↗</span></a></div>
     </div>
   </header>
   <main id="main">{% block content %}{% endblock %}</main>
@@ -58,13 +60,14 @@
         <a href="/" class="footer-logo">The Soft Nest Edit<span>.</span></a>
         <p>Considered spaces. Slow mornings.<br/>A little beauty in the everyday.</p>
       </div>
-      <div class="footer-column"><span class="footer-title">EXPLORE</span><a href="/journal/">The Journal</a><a href="/shop/">Shop the Edit</a><a href="/category/living-room/">Living Rooms</a><a href="/category/bedroom/">Bedrooms</a></div>
+      <div class="footer-column"><span class="footer-title">EXPLORE</span><a href="/shop/">Shop All Decor</a><a href="/shop/category/lighting-lamps/">Lighting & Lamps</a><a href="/shop/category/decorative-furniture/">Decorative Furniture</a><a href="/journal/">The Journal</a></div>
       <div class="footer-column"><span class="footer-title">INFORMATION</span><a href="/about/">Our Story</a><a href="/contact/">Contact</a><a href="/affiliate-disclosure/">Affiliate Disclosure</a><a href="/privacy/">Privacy Policy</a></div>
       <div class="footer-column footer-note"><span class="footer-title">THE EVERYDAY EDIT</span><p>Ideas for a home that looks beautiful, feels comfortable and really works for you.</p>{% if site.pinterest_url %}<a class="text-arrow" href="{{ site.pinterest_url }}" rel="noopener noreferrer" target="_blank">Follow along on Pinterest →</a>{% else %}<a class="text-arrow" href="/journal/">Find your next idea →</a>{% endif %}</div>
     </div>
     <div class="footer-bottom shell"><span>© {{ year }} The Soft Nest Edit. Made for real-life living.</span><span><a href="/admin/" rel="nofollow">Editor access</a> <span class="footer-dot">·</span> Crafted with care.</span></div>
   </footer>
   <script src="/assets/site.js" defer></script>
+  <script src="/assets/shopfront.js" defer></script>
   <script src="/assets/motion.js" defer></script>
 </body>
 </html>

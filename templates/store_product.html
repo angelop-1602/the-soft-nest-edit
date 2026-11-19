@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block jsonld %}<script type="application/ld+json">{{ store_product_jsonld | tojson }}</script>{% endblock %}
+{% block content %}
+<nav class="shell store-crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/shop/">Shop</a><span>/</span><a href="/shop/category/{{ store_product.category_slug }}/">{{ store_product.category }}</a><span>/</span><span aria-current="page">{{ store_product.title }}</span></nav>
+<section class="shell store-detail">
+  <div class="store-detail-image"><img src="{{ store_product.image }}" alt="{{ store_product.image_alt }}"></div>
+  <div class="store-detail-info"><span class="micro-title">{{ store_product.category }} / {{ store_product.subcategory }}</span><h1>{{ store_product.title }}</h1><p class="store-detail-price">${{ store_product.price_display }} <small>USD</small></p><p class="store-detail-summary">{{ store_product.summary }}</p>
+    <a href="{{ store_product.checkout_url }}" class="btn btn-dark store-buy" target="_blank" rel="noopener noreferrer">Buy securely <span aria-hidden="true">↗</span></a>
+    <p class="store-checkout-note">Checkout is completed through our external payment partner. Please check the final total and shipping address before paying.</p>
+    <div class="store-detail-facts"><h2>Shipping information</h2><p>{{ store_product.shipping_details }}</p><h2>Returns and refunds</h2><p>{{ store_product.return_details }}</p>{% if store_product.sku %}<h2>Product reference</h2><p>{{ store_product.sku }}</p>{% endif %}</div>
+  </div>
+</section>
+<section class="shell store-detail-foot"><p>Questions before buying? <a href="/contact/">Contact The Soft Nest Edit</a>. Orders are fulfilled by a third-party supplier, while The Soft Nest Edit remains your seller and point of contact.</p><a class="read-link" href="/shop/category/{{ store_product.category_slug }}/">More {{ store_product.category }} <span aria-hidden="true">↗</span></a></section>
+{% endblock %}
