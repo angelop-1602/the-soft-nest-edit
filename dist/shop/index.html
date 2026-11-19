@@ -5,23 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
   <meta name="theme-color" content="#f9f7f2" />
-  <title>Shop the Edit | Thoughtful Decor Finds</title>
-  <meta name="description" content="Explore home decor shopping guides and smart category-by-category ideas for cozy, functional spaces." />
-  <link rel="canonical" href="http://localhost:8000/shop/" />
+  <title>Shop Home Decor by Category | The Soft Nest Edit</title>
+  <meta name="description" content="Browse curated home decor, from furniture and lighting to wall art, mirrors, rugs and outdoor accents. Explore 24 collections." />
+  <link rel="canonical" href="https://thesoftnestedit.online/shop/" />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/styles.css" />
+  <link rel="stylesheet" href="/assets/motion.css" />
+  <link rel="stylesheet" href="/assets/shopfront.css" />
+  <link rel="stylesheet" href="/assets/store-enhancements.css" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Shop the Edit | Thoughtful Decor Finds" />
-  <meta property="og:description" content="Explore home decor shopping guides and smart category-by-category ideas for cozy, functional spaces." />
-  <meta property="og:url" content="http://localhost:8000/shop/" />
-<meta property="og:image" content="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&amp;fit=crop&amp;w=1500&amp;q=82" />  <meta name="twitter:card" content="summary_large_image" />
+  <meta property="og:title" content="Shop Home Decor by Category | The Soft Nest Edit" />
+  <meta property="og:description" content="Browse curated home decor, from furniture and lighting to wall art, mirrors, rugs and outdoor accents. Explore 24 collections." />
+  <meta property="og:url" content="https://thesoftnestedit.online/shop/" />
+  <meta property="og:site_name" content="The Soft Nest Edit" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&amp;fit=crop&amp;w=1500&amp;q=82" />
+<meta property="og:image:alt" content="Relaxed neutral bedroom with layered bedding and soft natural textures" />  <meta name="twitter:image" content="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&amp;fit=crop&amp;w=1500&amp;q=82" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="alternate" type="application/rss+xml" title="The Soft Nest Edit Journal" href="/rss.xml" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class="announcement">a little more lovely, every day <span aria-hidden="true">✳</span> <span class="announcement-extra">thoughtfully styled, simply lived</span></div>
+  <div class="announcement">Considered decor for every corner <span aria-hidden="true">✳</span> <span class="announcement-extra">thoughtfully styled, simply lived</span></div>
   <header class="site-header">
     <div class="header-inner shell">
       <a class="brand" href="/" aria-label="The Soft Nest Edit — home">
@@ -31,105 +39,183 @@
       <button class="mobile-toggle" type="button" aria-expanded="false" aria-label="Toggle menu" aria-controls="site-nav"><span></span><span></span><span></span></button>
       <nav id="site-nav" class="nav" aria-label="Primary navigation">
         <a  href="/">Home</a>
+        <a class="active" href="/shop/">Shop</a>
+        <a href="/shop/#all-collections">All categories</a>
         <a  href="/journal/">The Journal</a>
-        <a class="active" href="/shop/">Shop the Edit</a>
         <a  href="/about/">Our Story</a>
       </nav>
-      <div class="header-right"><span class="vertical-line"></span><a class="header-cta" href="/journal/">Get inspired <span aria-hidden="true">↗</span></a></div>
+      <div class="header-right"><a class="store-save-nav" href="/shop/saved/" aria-label="View saved home decor">Saved <span class="store-save-count" id="saved-count">0</span></a><span class="vertical-line"></span><a class="header-cta" href="/shop/">Shop decor <span aria-hidden="true">↗</span></a></div>
     </div>
   </header>
-  <main id="main"><section class="sub-hero shell"><span class="micro-title">A CONSIDERED COLLECTION</span><h1>Thoughtful finds.<br/><em>Everyday beauty.</em></h1><p>Our favorite way to shop is to start with what a space needs. These practical guides help you choose with intention.</p></section>
-<section class="shell curated-products-section" aria-labelledby="curated-products-title"><div class="section-heading"><div><span class="micro-title">THE AFFILIATE PRODUCT EDIT</span><h2 id="curated-products-title">Our curated <em>finds.</em></h2></div></div><p class="curated-products-intro">Browse home decor pieces selected for the spaces and ideas we cover. Product details and availability are controlled by the retailer.</p><p class="affiliate-product-disclosure"><strong>Affiliate disclosure:</strong> Some products here use affiliate links. We may earn a commission if you purchase through them at no additional cost to you. <a href="/affiliate-disclosure/">Learn more.</a></p><div class="affiliate-product-grid"><article class="affiliate-product" data-category="Living Room">
-  <div class="affiliate-product-image">
-    <a href="https://www.amazon.com/dp/B0158EQJSY" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="View Bedsure GentleSoft Sherpa Fleece Throw Blanket (50 × 60 in, Grey) at Amazon US">
-      <img src="/uploads/91-vcvxpxelacsl1500-1.avif" alt="B0158EQJSY" loading="lazy" />
-      <span class="affiliate-product-arrow" aria-hidden="true">↗</span>
-    </a>
+  <main id="main"><section class="store-hero">
+  <div class="shell store-hero-layout">
+    <div class="store-hero-copy">
+      <span class="micro-title">THE SOFT NEST EDIT / HOME DECOR SHOP</span>
+      <h1>Find what makes a house <em>feel like home.</em></h1>
+      <p>Explore considered decor for every corner, from statement lighting and furniture to art, textiles, storage and outdoor accents.</p>
+      <a class="btn btn-dark" href="#all-collections">Explore 24 collections <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="store-hero-photo"><img src="https://images.unsplash.com/photo-1722942631531-5b09fed44978?auto=format&fit=crop&w=1400&q=80" alt="Warm neutral living room with layered home furnishings" fetchpriority="high"><span class="store-photo-caption">SPACES TO LOVE · DETAILS TO KEEP</span></div>
   </div>
-  <div class="affiliate-product-content">
-    <div class="affiliate-product-eyebrow"><span>Living Room</span><span>Affiliate link</span></div>
-    <h3>Bedsure GentleSoft Sherpa Fleece Throw Blanket (50 × 60 in, Grey)</h3>
-    <p class="affiliate-product-description">A reversible, non-heated polyester sherpa-and-fleece throw to compare when you need a warm layer for the sofa. Check dimensions and color options.</p>
-    <a class="affiliate-product-button" href="https://www.amazon.com/dp/B0158EQJSY" target="_blank" rel="sponsored nofollow noopener noreferrer">View at Amazon US <span aria-hidden="true">↗</span></a>
-  </div>
-</article>
-<article class="affiliate-product" data-category="Bedroom">
-  <div class="affiliate-product-image">
-    <a href="https://www.amazon.com/dp/B01NBNDC1T" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="View Bedsure Prewashed Duvet Cover Set (Queen, White) at Amazon US">
-      <img src="/uploads/81vvz2zhplacsl1500-1.avif" alt="B01NBNDC1T" loading="lazy" />
-      <span class="affiliate-product-arrow" aria-hidden="true">↗</span>
-    </a>
-  </div>
-  <div class="affiliate-product-content">
-    <div class="affiliate-product-eyebrow"><span>Bedroom</span><span>Affiliate link</span></div>
-    <h3>Bedsure Prewashed Duvet Cover Set (Queen, White)</h3>
-    <p class="affiliate-product-description">A solid-color polyester microfiber duvet-cover set. Listing states it includes a queen duvet cover and two shams; the comforter/insert is sold separately.</p>
-    <a class="affiliate-product-button" href="https://www.amazon.com/dp/B01NBNDC1T" target="_blank" rel="sponsored nofollow noopener noreferrer">View at Amazon US <span aria-hidden="true">↗</span></a>
-  </div>
-</article>
-<article class="affiliate-product" data-category="Small Spaces">
-  <div class="affiliate-product-image">
-    <a href="https://www.amazon.com/dp/B07PCQKTCN" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="View Command X-Large Heavyweight Picture Hanging Strips (16 Pairs) at Amazon US">
-      <img src="/uploads/elegant-entryway-wall-organization.png" alt="B0B3SR5M71" loading="lazy" />
-      <span class="affiliate-product-arrow" aria-hidden="true">↗</span>
-    </a>
-  </div>
-  <div class="affiliate-product-content">
-    <div class="affiliate-product-eyebrow"><span>Small Spaces</span><span>Affiliate link</span></div>
-    <h3>Command X-Large Heavyweight Picture Hanging Strips (16 Pairs)</h3>
-    <p class="affiliate-product-description">Adhesive picture-hanging strips for approved frames and suitable surfaces. Follow the product installation, weight and surface restrictions exactly.</p>
-    <a class="affiliate-product-button" href="https://www.amazon.com/dp/B07PCQKTCN" target="_blank" rel="sponsored nofollow noopener noreferrer">View at Amazon US <span aria-hidden="true">↗</span></a>
-  </div>
-</article>
-<article class="affiliate-product" data-category="Bedroom">
-  <div class="affiliate-product-image">
-    <a href="https://www.amazon.com/dp/B0F3WFSZ4P" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="View DKCONONY Helix Mini Bedside Lamp at Amazon US">
-      <img src="/uploads/warmly-glowing-textured-bedside-lamp.png" alt="B0F3WFSZ4P" loading="lazy" />
-      <span class="affiliate-product-arrow" aria-hidden="true">↗</span>
-    </a>
-  </div>
-  <div class="affiliate-product-content">
-    <div class="affiliate-product-eyebrow"><span>Bedroom</span><span>Affiliate link</span></div>
-    <h3>DKCONONY Helix Mini Bedside Lamp</h3>
-    <p class="affiliate-product-description">Compact corded bedside lamp with wood base and three selectable light color temperatures. The listing states it does not dim brightness.</p>
-    <a class="affiliate-product-button" href="https://www.amazon.com/dp/B0F3WFSZ4P" target="_blank" rel="sponsored nofollow noopener noreferrer">View at Amazon US <span aria-hidden="true">↗</span></a>
-  </div>
-</article>
-<article class="affiliate-product" data-category="Small Spaces">
-  <div class="affiliate-product-image">
-    <a href="https://www.amazon.com/dp/B07MHWMCPD" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="View SimpleHouseware Four-Pocket Clear Window Door Organizer at Amazon US">
-      <img src="/uploads/organized-nursery-door-storage-1.png" alt="B07MHWMCPD" loading="lazy" />
-      <span class="affiliate-product-arrow" aria-hidden="true">↗</span>
-    </a>
-  </div>
-  <div class="affiliate-product-content">
-    <div class="affiliate-product-eyebrow"><span>Small Spaces</span><span>Affiliate link</span></div>
-    <h3>SimpleHouseware Four-Pocket Clear Window Door Organizer</h3>
-    <p class="affiliate-product-description">An over-door or wall-mount pocket organizer to consider for small essentials. Confirm this exact variant, mounting hardware, pocket size and door clearance.</p>
-    <a class="affiliate-product-button" href="https://www.amazon.com/dp/B07MHWMCPD" target="_blank" rel="sponsored nofollow noopener noreferrer">View at Amazon US <span aria-hidden="true">↗</span></a>
-  </div>
-</article>
-<article class="affiliate-product" data-category="Living Room">
-  <div class="affiliate-product-image">
-    <a href="https://www.amazon.com/dp/B0B3SR5M71" target="_blank" rel="sponsored nofollow noopener noreferrer" aria-label="View Utopia Bedding 18 × 18 in Pillow Inserts (Set of Two) at Amazon US">
-      <img src="/uploads/81ekaak6b6lacsl1500-1.avif" alt="B0B3SR5M71" loading="lazy" />
-      <span class="affiliate-product-arrow" aria-hidden="true">↗</span>
-    </a>
-  </div>
-  <div class="affiliate-product-content">
-    <div class="affiliate-product-eyebrow"><span>Living Room</span><span>Affiliate link</span></div>
-    <h3>Utopia Bedding 18 × 18 in Pillow Inserts (Set of Two)</h3>
-    <p class="affiliate-product-description">Two decorative pillow inserts for refreshing existing covers. Confirm fill, dimensions and count; inserts are not the same as cushion covers.</p>
-    <a class="affiliate-product-button" href="https://www.amazon.com/dp/B0B3SR5M71" target="_blank" rel="sponsored nofollow noopener noreferrer">View at Amazon US <span aria-hidden="true">↗</span></a>
-  </div>
-</article>
-</div></section><section class="shell shop-guides-heading"><span class="micro-title">ROOM-BY-ROOM INSPIRATION</span><h2>Guides to help you <em>choose well.</em></h2></section>
-<section class="shell shop-guide-grid">
-  <a href="/journal/cozy-living-room-ideas-on-a-budget/" class="shop-guide"><div class="shop-guide-img"><img src="https://images.unsplash.com/photo-1722942631531-5b09fed44978?auto=format&fit=crop&w=1100&q=82" alt="Neutral living room" loading="lazy" /></div><span>THE LIVING EDIT</span><h2>Cozy living room essentials</h2><p>Layered lighting, soft textiles and small details with a lot of heart.</p><b>Explore the guide ↗</b></a>
-  <a href="/journal/cozy-bedroom-on-a-budget/" class="shop-guide"><div class="shop-guide-img"><img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1100&q=82" alt="Soft neutral bedroom" loading="lazy" /></div><span>THE RESTFUL EDIT</span><h2>Bedroom comfort, considered</h2><p>Bedding, lamps and little rituals that make winding down easier.</p><b>Explore the guide ↗</b></a>
-  <a href="/journal/small-apartment-decor-ideas/" class="shop-guide"><div class="shop-guide-img"><img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1100&q=82" alt="Bright small space" loading="lazy" /></div><span>THE SMALL SPACE EDIT</span><h2>Smart space-saving finds</h2><p>Choose practical pieces that earn their place in your home.</p><b>Explore the guide ↗</b></a>
 </section>
-<div class="shell shop-disclaimer">Products are curated editorially. Retailers control prices, stock, shipping and returns. Review product specifications and current offers on the retailer site. When a link is an affiliate link, we label it and use sponsored link attributes. Read our <a href="/affiliate-disclosure/">Affiliate Disclosure</a>.</div>
+<section class="shell shop-introduction" aria-label="Explore the shop">
+  <div><strong>24 decor collections</strong><span>Everything from wall decor to accent furniture</span></div>
+  <div><strong>Made for real homes</strong><span>Explore by category and product type</span></div>
+  <div><strong>Inspiration included</strong><span>Styling ideas in our Journal</span></div>
+</section>
+<section class="shell store-catalog" id="all-collections" aria-labelledby="collection-title">
+  <div class="section-heading"><div><p class="micro-title">SHOP BY CATEGORY</p><h2 id="collection-title">A home, <em>your way.</em></h2></div><p class="store-intro-note">Discover all 24 collections. Individual products will appear as they are reviewed and added.</p></div>
+  <div class="store-tools"><label class="store-search" for="decor-search"><span aria-hidden="true">⌕</span><input type="search" id="decor-search" placeholder="Search decor or product types…" autocomplete="off" aria-controls="collection-list"><span class="sr-only">Search collections</span></label><span id="decor-count" aria-live="polite">24 collections</span></div>
+  <div class="collection-list" id="collection-list">
+    <a class="collection-tile" href="/shop/category/wall-decor/" data-decor-search="wall decor wall art paintings wall frames wall clocks wall stickers wall sculptures tapestries" aria-label="Explore Wall Decor collection">
+      <span class="collection-number">01 / COLLECTION</span>
+      <span class="collection-name">Wall Decor</span>
+      <span class="collection-types">Wall Art · Paintings · Wall Frames · Wall Clocks · +3 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/lighting-lamps/" data-decor-search="lighting &amp; lamps table lamps floor lamps pendant lights chandeliers wall lights decorative lights led lights" aria-label="Explore Lighting &amp; Lamps collection">
+      <span class="collection-number">02 / COLLECTION</span>
+      <span class="collection-name">Lighting &amp; Lamps</span>
+      <span class="collection-types">Table Lamps · Floor Lamps · Pendant Lights · Chandeliers · +3 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/vases-decorative-containers/" data-decor-search="vases &amp; decorative containers ceramic vases glass vases flower pots decorative bowls decorative jars" aria-label="Explore Vases &amp; Decorative Containers collection">
+      <span class="collection-number">03 / COLLECTION</span>
+      <span class="collection-name">Vases &amp; Decorative Containers</span>
+      <span class="collection-types">Ceramic Vases · Glass Vases · Flower Pots · Decorative Bowls · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/artificial-plants-flowers/" data-decor-search="artificial plants &amp; flowers artificial flowers artificial plants faux trees floral arrangements decorative greenery" aria-label="Explore Artificial Plants &amp; Flowers collection">
+      <span class="collection-number">04 / COLLECTION</span>
+      <span class="collection-name">Artificial Plants &amp; Flowers</span>
+      <span class="collection-types">Artificial Flowers · Artificial Plants · Faux Trees · Floral Arrangements · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/mirrors/" data-decor-search="mirrors wall mirrors decorative mirrors floor mirrors vanity mirrors accent mirrors" aria-label="Explore Mirrors collection">
+      <span class="collection-number">05 / COLLECTION</span>
+      <span class="collection-name">Mirrors</span>
+      <span class="collection-types">Wall Mirrors · Decorative Mirrors · Floor Mirrors · Vanity Mirrors · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/candles-fragrances/" data-decor-search="candles &amp; fragrances scented candles candle holders reed diffusers incense holders aroma diffusers" aria-label="Explore Candles &amp; Fragrances collection">
+      <span class="collection-number">06 / COLLECTION</span>
+      <span class="collection-name">Candles &amp; Fragrances</span>
+      <span class="collection-types">Scented Candles · Candle Holders · Reed Diffusers · Incense Holders · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/decorative-accessories/" data-decor-search="decorative accessories figurines statues sculptures ornaments decorative trays bookends" aria-label="Explore Decorative Accessories collection">
+      <span class="collection-number">07 / COLLECTION</span>
+      <span class="collection-name">Decorative Accessories</span>
+      <span class="collection-types">Figurines · Statues · Sculptures · Ornaments · +2 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/cushions-pillows/" data-decor-search="cushions &amp; pillows throw pillows cushion covers decorative pillows bolsters" aria-label="Explore Cushions &amp; Pillows collection">
+      <span class="collection-number">08 / COLLECTION</span>
+      <span class="collection-name">Cushions &amp; Pillows</span>
+      <span class="collection-types">Throw Pillows · Cushion Covers · Decorative Pillows · Bolsters</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/rugs-carpets/" data-decor-search="rugs &amp; carpets area rugs accent rugs runners doormats decorative carpets" aria-label="Explore Rugs &amp; Carpets collection">
+      <span class="collection-number">09 / COLLECTION</span>
+      <span class="collection-name">Rugs &amp; Carpets</span>
+      <span class="collection-types">Area Rugs · Accent Rugs · Runners · Doormats · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/curtains-window-decor/" data-decor-search="curtains &amp; window decor curtains drapes blinds valances curtain tiebacks" aria-label="Explore Curtains &amp; Window Decor collection">
+      <span class="collection-number">10 / COLLECTION</span>
+      <span class="collection-name">Curtains &amp; Window Decor</span>
+      <span class="collection-types">Curtains · Drapes · Blinds · Valances · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/table-decor/" data-decor-search="table decor centerpieces table runners placemats tablecloths decorative trays" aria-label="Explore Table Decor collection">
+      <span class="collection-number">11 / COLLECTION</span>
+      <span class="collection-name">Table Decor</span>
+      <span class="collection-types">Centerpieces · Table Runners · Placemats · Tablecloths · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/storage-organization/" data-decor-search="storage &amp; organization decorative baskets storage boxes shelves organizers decorative hooks" aria-label="Explore Storage &amp; Organization collection">
+      <span class="collection-number">12 / COLLECTION</span>
+      <span class="collection-name">Storage &amp; Organization</span>
+      <span class="collection-types">Decorative Baskets · Storage Boxes · Shelves · Organizers · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/clocks/" data-decor-search="clocks wall clocks desk clocks mantel clocks vintage clocks" aria-label="Explore Clocks collection">
+      <span class="collection-number">13 / COLLECTION</span>
+      <span class="collection-name">Clocks</span>
+      <span class="collection-types">Wall Clocks · Desk Clocks · Mantel Clocks · Vintage Clocks</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/decorative-furniture/" data-decor-search="decorative furniture accent tables console tables side tables ottomans accent chairs" aria-label="Explore Decorative Furniture collection">
+      <span class="collection-number">14 / COLLECTION</span>
+      <span class="collection-name">Decorative Furniture</span>
+      <span class="collection-types">Accent Tables · Console Tables · Side Tables · Ottomans · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/seasonal-holiday-decor/" data-decor-search="seasonal &amp; holiday decor christmas decorations halloween decor easter decor party decorations" aria-label="Explore Seasonal &amp; Holiday Decor collection">
+      <span class="collection-number">15 / COLLECTION</span>
+      <span class="collection-name">Seasonal &amp; Holiday Decor</span>
+      <span class="collection-types">Christmas Decorations · Halloween Decor · Easter Decor · Party Decorations</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/religious-spiritual-decor/" data-decor-search="religious &amp; spiritual decor religious statues crosses religious wall art prayer displays" aria-label="Explore Religious &amp; Spiritual Decor collection">
+      <span class="collection-number">16 / COLLECTION</span>
+      <span class="collection-name">Religious &amp; Spiritual Decor</span>
+      <span class="collection-types">Religious Statues · Crosses · Religious Wall Art · Prayer Displays</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/kitchen-dining-decor/" data-decor-search="kitchen &amp; dining decor decorative plates serving trays fruit bowls kitchen wall art napkin holders" aria-label="Explore Kitchen &amp; Dining Decor collection">
+      <span class="collection-number">17 / COLLECTION</span>
+      <span class="collection-name">Kitchen &amp; Dining Decor</span>
+      <span class="collection-types">Decorative Plates · Serving Trays · Fruit Bowls · Kitchen Wall Art · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/bathroom-decor/" data-decor-search="bathroom decor soap dispensers bathroom accessories decorative containers bathroom mats" aria-label="Explore Bathroom Decor collection">
+      <span class="collection-number">18 / COLLECTION</span>
+      <span class="collection-name">Bathroom Decor</span>
+      <span class="collection-types">Soap Dispensers · Bathroom Accessories · Decorative Containers · Bathroom Mats</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/bedroom-decor/" data-decor-search="bedroom decor bedside accessories bed throws decorative bedding bedroom wall art" aria-label="Explore Bedroom Decor collection">
+      <span class="collection-number">19 / COLLECTION</span>
+      <span class="collection-name">Bedroom Decor</span>
+      <span class="collection-types">Bedside Accessories · Bed Throws · Decorative Bedding · Bedroom Wall Art</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/outdoor-garden-decor/" data-decor-search="outdoor &amp; garden decor garden statues outdoor planters wind chimes garden lights decorative pots" aria-label="Explore Outdoor &amp; Garden Decor collection">
+      <span class="collection-number">20 / COLLECTION</span>
+      <span class="collection-name">Outdoor &amp; Garden Decor</span>
+      <span class="collection-types">Garden Statues · Outdoor Planters · Wind Chimes · Garden Lights · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/natural-handmade-decor/" data-decor-search="natural &amp; handmade decor woven baskets rattan decor bamboo decor wooden ornaments macramé" aria-label="Explore Natural &amp; Handmade Decor collection">
+      <span class="collection-number">21 / COLLECTION</span>
+      <span class="collection-name">Natural &amp; Handmade Decor</span>
+      <span class="collection-types">Woven Baskets · Rattan Decor · Bamboo Decor · Wooden Ornaments · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/home-fragrance-accessories/" data-decor-search="home fragrance accessories potpourri wax warmers essential oil burners fragrance holders" aria-label="Explore Home Fragrance Accessories collection">
+      <span class="collection-number">22 / COLLECTION</span>
+      <span class="collection-name">Home Fragrance Accessories</span>
+      <span class="collection-types">Potpourri · Wax Warmers · Essential Oil Burners · Fragrance Holders</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/personalized-decor/" data-decor-search="personalized decor custom name signs personalized frames custom wall art engraved decorations" aria-label="Explore Personalized Decor collection">
+      <span class="collection-number">23 / COLLECTION</span>
+      <span class="collection-name">Personalized Decor</span>
+      <span class="collection-types">Custom Name Signs · Personalized Frames · Custom Wall Art · Engraved Decorations</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="collection-tile" href="/shop/category/bookshelf-office-decor/" data-decor-search="bookshelf &amp; office decor desk ornaments globes bookends miniature sculptures decorative books" aria-label="Explore Bookshelf &amp; Office Decor collection">
+      <span class="collection-number">24 / COLLECTION</span>
+      <span class="collection-name">Bookshelf &amp; Office Decor</span>
+      <span class="collection-types">Desk Ornaments · Globes · Bookends · Miniature Sculptures · +1 more</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+  </div>
+  <p id="decor-empty" class="store-empty-search" role="status" hidden>No collections match that search. Try “lamps”, “mirrors” or “furniture”.</p>
+</section>
+<section class="shell shop-soft-launch"><span class="micro-title">THE COLLECTION IS GROWING</span><h2>Great rooms take <em>thoughtful choices.</em></h2><p>Our category directory is open. Product previews can appear before checkout is activated. Purchases open only after pricing, shipping, returns and checkout have been verified. Browse the Journal for inspiration in the meantime.</p><a href="/journal/" class="read-link">Read the Journal <span aria-hidden="true">↗</span></a></section>
+<section class="shell store-journal-cta"><div><p class="micro-title">FROM THE JOURNAL</p><h2>Not sure where to <em>start?</em></h2><p>Explore room-by-room inspiration and practical ways to bring your home together.</p><a class="btn btn-dark" href="/journal/">Explore decor ideas <span aria-hidden="true">↗</span></a></div><img loading="lazy" src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1100&q=78" alt="Restful neutral bedroom with soft furnishings"></section>
 </main>
   <footer class="footer">
     <div class="shell footer-grid">
@@ -138,12 +224,14 @@
         <a href="/" class="footer-logo">The Soft Nest Edit<span>.</span></a>
         <p>Considered spaces. Slow mornings.<br/>A little beauty in the everyday.</p>
       </div>
-      <div class="footer-column"><span class="footer-title">EXPLORE</span><a href="/journal/">The Journal</a><a href="/shop/">Shop the Edit</a><a href="/category/living-room/">Living Rooms</a><a href="/category/bedroom/">Bedrooms</a></div>
+      <div class="footer-column"><span class="footer-title">EXPLORE</span><a href="/shop/">Shop All Decor</a><a href="/shop/category/lighting-lamps/">Lighting & Lamps</a><a href="/shop/category/decorative-furniture/">Decorative Furniture</a><a href="/journal/">The Journal</a></div>
       <div class="footer-column"><span class="footer-title">INFORMATION</span><a href="/about/">Our Story</a><a href="/contact/">Contact</a><a href="/affiliate-disclosure/">Affiliate Disclosure</a><a href="/privacy/">Privacy Policy</a></div>
-      <div class="footer-column footer-note"><span class="footer-title">THE EVERYDAY EDIT</span><p>Ideas for a home that looks beautiful, feels comfortable and really works for you.</p><a class="text-arrow" href="/journal/">Find your next idea →</a></div>
+      <div class="footer-column footer-note"><span class="footer-title">THE EVERYDAY EDIT</span><p>Ideas for a home that looks beautiful, feels comfortable and really works for you.</p><a class="text-arrow" href="https://ph.pinterest.com/thesoftnestedit/" rel="noopener noreferrer" target="_blank">Follow along on Pinterest →</a></div>
     </div>
     <div class="footer-bottom shell"><span>© 2026 The Soft Nest Edit. Made for real-life living.</span><span><a href="/admin/" rel="nofollow">Editor access</a> <span class="footer-dot">·</span> Crafted with care.</span></div>
   </footer>
   <script src="/assets/site.js" defer></script>
+  <script src="/assets/shopfront.js" defer></script>
+  <script src="/assets/motion.js" defer></script>
 </body>
 </html>

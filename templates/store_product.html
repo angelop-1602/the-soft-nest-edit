@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block jsonld %}<script type="application/ld+json">{{ store_product_jsonld | tojson }}</script>{% endblock %}
+{% block content %}
+<nav class="shell store-crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/shop/">Shop</a><span>/</span><a href="/shop/category/{{ store_product.category_slug }}/">{{ store_product.category }}</a><span>/</span><span aria-current="page">{{ store_product.title }}</span></nav>
+<section class="shell store-detail">
+  <div class="store-detail-image"><img src="{{ store_product.image }}" alt="{{ store_product.image_alt }}"></div>
+  <div class="store-detail-info">
+    <span class="micro-title">{{ store_product.category }} / {{ store_product.subcategory }}</span>
+    <h1>{{ store_product.title }}</h1>
+    <p class="store-detail-price">{% if store_product.price_display %}${{ store_product.price_display }} <small>USD</small>{% else %}<span class="store-price-pending">Price coming soon</span>{% endif %}</p>
+    <p class="store-detail-summary">{{ store_product.summary }}</p>
+    <div class="store-product-actions">
+      {% if store_product.is_purchasable %}
+      <a href="{{ store_product.checkout_url }}" class="btn btn-dark store-buy" target="_blank" rel="noopener noreferrer">Buy securely <span aria-hidden="true">↗</span></a>
+      {% else %}
+      <span class="store-unavailable" role="status">Not yet available to order</span>
+      {% endif %}
+      <button class="store-save-button store-save-button--large" data-save-product="{{ store_product.slug }}" aria-pressed="false" type="button">♡ Save for later</button>
+    </div>
+    {% if store_product.is_purchasable %}<p class="store-checkout-note">Your payment is processed securely by our external payment provider. Confirm the amount, address, shipping and seller details before paying. Each Buy securely link currently processes one product at a time.</p>{% else %}<p class="store-checkout-note">This listing is a preview. No payment can be made until product availability, shipping, return terms and checkout are verified.</p>{% endif %}
+    <div class="store-detail-facts">
+      <h2>Shipping information</h2><p>{{ store_product.shipping_details or 'Shipping options and delivery estimates will be confirmed before ordering opens.' }}</p>
+      <h2>Returns and refunds</h2><p>{{ store_product.return_details or 'Our return and refund terms will be published before this product is sold.' }}</p>
+    </div>
+  </div>
+</section>
+<section class="shell store-detail-foot"><p>Questions about this product? <a href="/contact/">Contact The Soft Nest Edit</a>. When available for sale, The Soft Nest Edit handles customer support and uses a fulfillment partner to ship orders.</p><a class="read-link" href="/shop/category/{{ store_product.category_slug }}/">More {{ store_product.category }} <span aria-hidden="true">↗</span></a></section>
+{% endblock %}

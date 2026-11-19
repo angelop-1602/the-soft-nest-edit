@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="shell store-crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/shop/">Shop</a><span>/</span><span aria-current="page">Saved products</span></nav>
+<section class="shell store-saved-page">
+  <span class="micro-title">YOUR CURATED LIST</span>
+  <h1>Saved <em>pieces.</em></h1>
+  <p>Keep the home decor you love in one place while you explore. Your saved list stays in this browser, not in an account.</p>
+  <p class="store-saved-count" id="store-saved-total" aria-live="polite"></p>
+  <div id="saved-product-grid" class="store-product-grid" aria-live="polite"></div>
+  <div id="saved-empty" class="store-coming-soon"><h2>Your collection starts here.</h2><p>Find something you love and select “Save for later” on its product page.</p><a href="/shop/" class="btn btn-dark">Browse home decor <span aria-hidden="true">↗</span></a></div>
+</section>
+<script type="application/json" id="saved-catalog-data">{{ saved_catalog | tojson }}</script>
+{% endblock %}

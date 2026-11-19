@@ -29,6 +29,12 @@ content:
         required: true
         options:
           format: yyyy-MM-dd
+      - name: updated
+        label: Last substantial update (optional)
+        type: date
+        description: Set only if you materially update the article. Used in structured data and sitemap.
+        options:
+          format: yyyy-MM-dd
       - name: category
         label: Category
         type: select
@@ -71,7 +77,7 @@ content:
         type: rich-text
         required: true
   - name: products
-    label: Affiliate Products
+    label: Journal Affiliate Products
     type: collection
     path: content/products
     format: yaml-frontmatter
@@ -130,6 +136,78 @@ content:
         label: Editor notes (optional)
         type: rich-text
         description: Not displayed on the public site, but stored in GitHub. Do not store confidential information.
+  - name: store_products
+    label: Dropshipping Store Products
+    type: collection
+    path: content/store-products
+    format: yaml-frontmatter
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields: [title, category, subcategory, price_usd, published, ready_to_sell]
+    fields:
+      - name: title
+        label: Product title
+        type: string
+        required: true
+      - name: category
+        label: Shop category
+        type: select
+        required: true
+        options:
+          values: [Wall Decor, Lighting & Lamps, Vases & Decorative Containers, Artificial Plants & Flowers, Mirrors, Candles & Fragrances, Decorative Accessories, Cushions & Pillows, Rugs & Carpets, Curtains & Window Decor, Table Decor, Storage & Organization, Clocks, Decorative Furniture, Seasonal & Holiday Decor, Religious & Spiritual Decor, Kitchen & Dining Decor, Bathroom Decor, Bedroom Decor, Outdoor & Garden Decor, Natural & Handmade Decor, Home Fragrance Accessories, Personalized Decor, Bookshelf & Office Decor]
+      - name: subcategory
+        label: Product type (exact wording from selected collection)
+        type: string
+        required: true
+        description: Use one of the subcategories shown on your Shop collection page.
+      - name: image
+        label: Product image you have permission to use
+        type: image
+        required: true
+      - name: image_alt
+        label: Image description
+        type: string
+        required: true
+      - name: summary
+        label: Product description
+        type: text
+        required: true
+      - name: price_usd
+        label: Sale price in USD (optional for preview)
+        type: number
+        required: false
+        description: Show USD price only when confirmed. Leave blank for a preview.
+      - name: checkout_url
+        label: Tested hosted checkout URL (https, optional for preview)
+        type: string
+        required: false
+        description: Use YOUR verified per-product PayPal or approved gateway checkout link. Not a CJ supplier or Amazon link.
+      - name: shipping_details
+        label: Verified US shipping information
+        type: text
+        required: false
+      - name: return_details
+        label: Your customer return and refund conditions
+        type: text
+        required: false
+      - name: sku
+        label: Internal CJ SKU / sourcing reference (optional)
+        type: string
+      - name: featured
+        label: Feature product first
+        type: boolean
+      - name: ready_to_sell
+        label: Enable purchase button (only after payment, stock and policies are verified)
+        type: boolean
+        description: Leave off for a preview. When enabled, valid USD price, HTTPS checkout link, shipping and return terms are all required.
+      - name: published
+        label: Show in storefront catalog
+        type: boolean
+        description: A published product may be a non-purchasable preview; Buy securely appears only when ready_to_sell is enabled and all required sale details are complete.
+      - name: body
+        label: Private editorial notes (no secrets)
+        type: rich-text
   - name: settings
     label: Site settings
     type: file

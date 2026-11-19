@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="shell store-crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/shop/">Shop</a><span>/</span><span aria-current="page">Sandbox checkout test</span></nav>
+<section class="shell paypal-sandbox" aria-labelledby="paypal-sandbox-title">
+  <span class="micro-title">THE SOFT NEST EDIT / PAYMENT INTEGRATION TEST</span>
+  <h1 id="paypal-sandbox-title">Test your <em>PayPal checkout.</em></h1>
+  <p>This page is for testing your PayPal integration using <strong>Sandbox accounts only</strong>. It does not sell a real product, collect a delivery address, or create a CJ order.</p>
+  <div class="paypal-sandbox-card">
+    <div>
+      <strong>Sandbox test item</strong>
+      <p>A virtual checkout test — no merchandise or delivery.</p>
+    </div>
+    <div class="paypal-sandbox-amount">$1.00 <small>USD · test funds</small></div>
+  </div>
+  <div class="paypal-sandbox-actions">
+    <button id="paypal-sandbox-start" class="btn btn-dark" type="button" disabled>Continue to PayPal Sandbox</button>
+    <button id="paypal-sandbox-capture" class="btn btn-dark" type="button" hidden>Complete sandbox payment</button>
+  </div>
+  <p id="paypal-sandbox-status" role="status" aria-live="polite">Checking Sandbox configuration…</p>
+  <p class="paypal-sandbox-disclaimer">This test page is publicly reachable but excluded from indexing. PayPal Live is always blocked here. If the payment result is uncertain, do not attempt another capture; inspect your PayPal Sandbox account. Supplier fulfillment is disabled.</p>
+  <a class="read-link" href="/shop/">Return to shop <span aria-hidden="true">↗</span></a>
+</section>
+{% endblock %}

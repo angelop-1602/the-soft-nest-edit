@@ -1,0 +1,15 @@
+{% macro store_card(product) %}
+<article class="store-product-card" data-subcategory="{{ product.subcategory|lower }}" data-product-search="{{ (product.title ~ ' ' ~ product.category ~ ' ' ~ product.subcategory ~ ' ' ~ product.summary)|lower }}" data-title="{{ product.title|lower }}" data-price="{{ product.price_display }}">
+  <a class="store-product-image" href="{{ product.url }}" aria-label="View {{ product.title }}">
+    <img src="{{ product.image }}" alt="{{ product.image_alt }}" loading="lazy" />
+    {% if not product.is_purchasable %}<span class="store-preview-tag">Preview</span>{% endif %}
+  </a>
+  <div class="store-product-info">
+    <span class="store-product-category">{{ product.category }} / {{ product.subcategory }}</span>
+    <h3><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    <p>{{ product.summary }}</p>
+    <div class="store-product-footer"><strong>{% if product.price_display %}${{ product.price_display }} <small>USD</small>{% else %}<small>Price coming soon</small>{% endif %}</strong><a href="{{ product.url }}">Details ↗</a></div>
+    <button class="store-save-button" type="button" data-save-product="{{ product.slug }}" aria-pressed="false">♡ Save for later</button>
+  </div>
+</article>
+{% endmacro %}

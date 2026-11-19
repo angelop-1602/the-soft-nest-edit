@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="shell store-crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/shop/">Shop</a><span>/</span><span aria-current="page">Catalog staging preview</span></nav>
+<section class="shell cj-preview-page" aria-labelledby="cj-preview-heading">
+  <p class="micro-title">THE SOFT NEST EDIT / CATALOG STAGING</p>
+  <h1 id="cj-preview-heading">A closer look at <em>what's arriving.</em></h1>
+  <p class="cj-preview-lead">This page displays records imported from your CJ supplier account. These are unreviewed supplier records, <strong>not confirmed customer offers</strong>. Prices, US shipping, availability, and product specifications are still being checked. Purchasing is disabled.</p>
+  <a id="cj-planning-cart-link" class="cj-preview-cart-link" href="/shop/cart-preview/">View planning cart</a>
+  <div class="cj-preview-toolbar">
+    <label class="store-search" for="cj-preview-search"><span aria-hidden="true">⌕</span><input id="cj-preview-search" type="search" placeholder="Filter products on this page…" autocomplete="off" /></label>
+    <span id="cj-preview-count" role="status" aria-live="polite">Loading supplier catalog…</span>
+  </div>
+  <p class="cj-preview-message" id="cj-preview-message" role="status" aria-live="polite">Checking your synchronized catalog…</p>
+  <div class="store-product-grid cj-preview-grid" id="cj-preview-grid" aria-live="off"></div>
+  <nav class="cj-preview-pagination" aria-label="Catalog preview pages">
+    <button type="button" id="cj-preview-previous" disabled>← Previous</button>
+    <span id="cj-preview-page-label"></span>
+    <button type="button" id="cj-preview-next" disabled>Next →</button>
+  </nav>
+  <p class="cj-preview-note">This is a publicly accessible, noindex staging page, not a private admin dashboard. Do not use it to advertise products until supplier images, descriptions, variants, US shipping, pricing, and return terms have been reviewed. Supplier costs and credentials are never included in this preview.</p>
+  <a class="read-link" href="/shop/">Return to the shop <span aria-hidden="true">↗</span></a>
+</section>
+{% endblock %}

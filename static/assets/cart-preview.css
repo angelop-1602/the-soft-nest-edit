@@ -1,0 +1,26 @@
+/* CJ non-purchasable planning cart; no checkout UI or payment collection. */
+.cj-cart-page{padding:55px 0 110px;max-width:1100px;min-height:60vh}
+.cj-cart-page h1{font:400 clamp(43px,5.4vw,78px)/1.12 var(--serif);margin:17px 0 26px}
+.cj-cart-page h1 em{font-weight:400;color:var(--olive)}
+.cj-cart-lead{color:var(--muted);max-width:760px;font-size:14px;line-height:1.85}
+.cj-cart-alert{padding:17px 20px;background:#f3eee5;color:#545144;font-size:12px;line-height:1.7;margin:32px 0}
+.cj-cart-lines{display:grid;gap:15px}
+.cj-cart-line{display:grid;grid-template-columns:85px minmax(0,1fr) auto;align-items:center;gap:22px;padding:18px;border:1px solid #e4ded3;background:#fffefa}
+.cj-cart-line img{width:85px;height:102px;object-fit:cover;background:#ece7dd}
+.cj-cart-line-title{font:400 22px/1.2 var(--serif);margin:0 0 8px}
+.cj-cart-line-info{font-size:11px;color:var(--muted);line-height:1.8}
+.cj-cart-line-controls{display:flex;align-items:center;gap:10px}
+.cj-cart-quantity{min-width:1.2em;text-align:center;font-size:13px}
+.cj-cart-btn,.cj-cart-clear,.cj-preview-cart-button{border:1px solid #bcb7aa;background:#fffefa;padding:11px 14px;color:#49483f;cursor:pointer;font:600 11px var(--sans)}
+.cj-cart-btn:disabled{opacity:.5;cursor:not-allowed}
+.cj-cart-clear{background:transparent}
+.cj-cart-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:35px 0 30px}
+.cj-cart-checkout{padding:25px;background:#eff0e9;border:1px solid #d8ded1;line-height:1.8}
+.cj-cart-checkout strong{font-size:14px}
+.cj-cart-checkout p{font-size:12px;color:var(--muted);margin:7px 0 0}
+.cj-preview-selector{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:14px}
+.cj-preview-selector select{max-width:100%;min-width:155px;padding:10px;background:#fffefa;border:1px solid #c5c0b6;color:#383a31;font:500 12px var(--sans)}
+.cj-preview-selector-msg{font-size:11px;line-height:1.7;color:#625b50;margin-top:9px}
+.cj-preview-cart-link{display:inline-flex;margin:10px 0 22px;text-decoration:underline;text-underline-offset:4px;font-size:12px;font-weight:700}
+.cj-cart-btn:focus-visible,.cj-cart-clear:focus-visible,.cj-preview-cart-button:focus-visible,.cj-preview-selector select:focus-visible{outline:2px solid var(--olive-dark);outline-offset:3px}
+@media(max-width:620px){.cj-cart-line{grid-template-columns:65px 1fr;gap:14px}.cj-cart-line img{width:65px;height:80px}.cj-cart-line-controls{grid-column:2}.cj-cart-page{padding-top:35px}.cj-cart-line-title{font-size:19px}}

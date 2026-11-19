@@ -1,7 +1,34 @@
 {
   "name": "the-soft-nest-edit",
+  "main": "src/index.js",
   "compatibility_date": "2026-11-18",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "softnest-orders-sandbox",
+      "database_id": "e9572bf4-63e2-4e5a-9d29-efc004318b20"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "0 */6 * * *"
+    ]
+  },
+  "observability": {
+    "logs": {
+      "enabled": false,
+      "invocation_logs": true
+    }
+  },
+  "vars": {
+    "PAYPAL_MODE": "sandbox",
+    "PAYPAL_SANDBOX_CHECKOUT_ENABLED": "true"
   }
 }

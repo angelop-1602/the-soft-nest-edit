@@ -1,13 +1,41 @@
 {% extends 'base.html' %}
-{% from 'product_card.html' import product_card %}
+{% from 'store_card.html' import store_card %}
 {% block content %}
-<section class="sub-hero shell"><span class="micro-title">A CONSIDERED COLLECTION</span><h1>Thoughtful finds.<br/><em>Everyday beauty.</em></h1><p>Our favorite way to shop is to start with what a space needs. These practical guides help you choose with intention.</p></section>
-{% if products %}<section class="shell curated-products-section" aria-labelledby="curated-products-title"><div class="section-heading"><div><span class="micro-title">THE AFFILIATE PRODUCT EDIT</span><h2 id="curated-products-title">Our curated <em>finds.</em></h2></div></div><p class="curated-products-intro">Browse home decor pieces selected for the spaces and ideas we cover. Product details and availability are controlled by the retailer.</p>{% if has_affiliate_products %}<p class="affiliate-product-disclosure"><strong>Affiliate disclosure:</strong> Some products here use affiliate links. We may earn a commission if you purchase through them at no additional cost to you. <a href="/affiliate-disclosure/">Learn more.</a></p>{% endif %}<div class="affiliate-product-grid">{% for product in products %}{{ product_card(product) }}{% endfor %}</div></section>{% endif %}
-<section class="shell shop-guides-heading"><span class="micro-title">ROOM-BY-ROOM INSPIRATION</span><h2>Guides to help you <em>choose well.</em></h2></section>
-<section class="shell shop-guide-grid">
-  <a href="/journal/cozy-living-room-ideas-on-a-budget/" class="shop-guide"><div class="shop-guide-img"><img src="https://images.unsplash.com/photo-1722942631531-5b09fed44978?auto=format&fit=crop&w=1100&q=82" alt="Neutral living room" loading="lazy" /></div><span>THE LIVING EDIT</span><h2>Cozy living room essentials</h2><p>Layered lighting, soft textiles and small details with a lot of heart.</p><b>Explore the guide ↗</b></a>
-  <a href="/journal/cozy-bedroom-on-a-budget/" class="shop-guide"><div class="shop-guide-img"><img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1100&q=82" alt="Soft neutral bedroom" loading="lazy" /></div><span>THE RESTFUL EDIT</span><h2>Bedroom comfort, considered</h2><p>Bedding, lamps and little rituals that make winding down easier.</p><b>Explore the guide ↗</b></a>
-  <a href="/journal/small-apartment-decor-ideas/" class="shop-guide"><div class="shop-guide-img"><img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1100&q=82" alt="Bright small space" loading="lazy" /></div><span>THE SMALL SPACE EDIT</span><h2>Smart space-saving finds</h2><p>Choose practical pieces that earn their place in your home.</p><b>Explore the guide ↗</b></a>
+<section class="store-hero">
+  <div class="shell store-hero-layout">
+    <div class="store-hero-copy">
+      <span class="micro-title">THE SOFT NEST EDIT / HOME DECOR SHOP</span>
+      <h1>Find what makes a house <em>feel like home.</em></h1>
+      <p>Explore considered decor for every corner, from statement lighting and furniture to art, textiles, storage and outdoor accents.</p>
+      <a class="btn btn-dark" href="#all-collections">Explore 24 collections <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="store-hero-photo"><img src="https://images.unsplash.com/photo-1722942631531-5b09fed44978?auto=format&fit=crop&w=1400&q=80" alt="Warm neutral living room with layered home furnishings" fetchpriority="high"><span class="store-photo-caption">SPACES TO LOVE · DETAILS TO KEEP</span></div>
+  </div>
 </section>
-<div class="shell shop-disclaimer">Products are curated editorially. Retailers control prices, stock, shipping and returns. Review product specifications and current offers on the retailer site. When a link is an affiliate link, we label it and use sponsored link attributes. Read our <a href="/affiliate-disclosure/">Affiliate Disclosure</a>.</div>
+<section class="shell shop-introduction" aria-label="Explore the shop">
+  <div><strong>24 decor collections</strong><span>Everything from wall decor to accent furniture</span></div>
+  <div><strong>Made for real homes</strong><span>Explore by category and product type</span></div>
+  <div><strong>Inspiration included</strong><span>Styling ideas in our Journal</span></div>
+</section>
+<section class="shell store-catalog" id="all-collections" aria-labelledby="collection-title">
+  <div class="section-heading"><div><p class="micro-title">SHOP BY CATEGORY</p><h2 id="collection-title">A home, <em>your way.</em></h2></div><p class="store-intro-note">Discover all 24 collections. Individual products will appear as they are reviewed and added.</p></div>
+  <div class="store-tools"><label class="store-search" for="decor-search"><span aria-hidden="true">⌕</span><input type="search" id="decor-search" placeholder="Search decor or product types…" autocomplete="off" aria-controls="collection-list"><span class="sr-only">Search collections</span></label><span id="decor-count" aria-live="polite">{{ store_categories|length }} collections</span></div>
+  <div class="collection-list" id="collection-list">
+    {% for collection in store_categories %}
+    <a class="collection-tile" href="/shop/category/{{ collection.slug }}/" data-decor-search="{{ (collection.name ~ ' ' ~ collection.subcategories|join(' '))|lower }}" aria-label="Explore {{ collection.name }} collection">
+      <span class="collection-number">{{ '%02d'|format(loop.index) }} / COLLECTION</span>
+      <span class="collection-name">{{ collection.name }}</span>
+      <span class="collection-types">{{ collection.subcategories[:4]|join(' · ') }}{% if collection.subcategories|length > 4 %} · +{{ collection.subcategories|length - 4 }} more{% endif %}</span>
+      <span class="collection-arrow" aria-hidden="true">↗</span>
+    </a>
+    {% endfor %}
+  </div>
+  <p id="decor-empty" class="store-empty-search" role="status" hidden>No collections match that search. Try “lamps”, “mirrors” or “furniture”.</p>
+</section>
+{% if store_products %}
+<section class="shell store-featured" aria-labelledby="store-products-title"><div class="section-heading"><div><p class="micro-title">READY TO EXPLORE</p><h2 id="store-products-title">Shop our <em>latest additions.</em></h2></div></div><div class="store-tools store-product-tools"><label class="store-search" for="store-product-search"><span aria-hidden="true">⌕</span><input id="store-product-search" type="search" placeholder="Find a product…" autocomplete="off" aria-label="Search products" /></label><label class="store-sort-label">Sort by <select id="store-product-sort" aria-label="Sort products"><option value="featured">Featured</option><option value="az">Name A–Z</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label><span id="store-filter-count" aria-live="polite"></span></div><div class="store-product-grid" id="filtered-products">{% for product in store_products %}{{ store_card(product) }}{% endfor %}</div><p class="store-empty-search" id="store-filter-empty" hidden>No items match. Try another search.</p></section>
+{% else %}
+<section class="shell shop-soft-launch"><span class="micro-title">THE COLLECTION IS GROWING</span><h2>Great rooms take <em>thoughtful choices.</em></h2><p>Our category directory is open. Product previews can appear before checkout is activated. Purchases open only after pricing, shipping, returns and checkout have been verified. Browse the Journal for inspiration in the meantime.</p><a href="/journal/" class="read-link">Read the Journal <span aria-hidden="true">↗</span></a></section>
+{% endif %}
+<section class="shell store-journal-cta"><div><p class="micro-title">FROM THE JOURNAL</p><h2>Not sure where to <em>start?</em></h2><p>Explore room-by-room inspiration and practical ways to bring your home together.</p><a class="btn btn-dark" href="/journal/">Explore decor ideas <span aria-hidden="true">↗</span></a></div><img loading="lazy" src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1100&q=78" alt="Restful neutral bedroom with soft furnishings"></section>
 {% endblock %}
