@@ -7,7 +7,7 @@ image_alt: B0B3SR5M71
 summary: Adhesive picture-hanging strips for approved frames and suitable
   surfaces. Follow the product installation, weight and surface restrictions
   exactly.
-product_url: https://www.amazon.com/dp/B07PCQKTCN
+product_url: https://www.amazon.com/dp/B0B3SR5M71
 affiliate: true
 featured_shop: false
 published: true
